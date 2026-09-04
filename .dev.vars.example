@@ -1,0 +1,10 @@
+BETTER_AUTH_SECRET=replace-with-at-least-32-random-characters
+BETTER_AUTH_URL=http://localhost:3000
+ADMIN_EMAILS=you@example.com
+
+# Optional: enables browser -> R2 presigned PUT. Without these values the app
+# safely falls back to authenticated server-streamed upload.
+R2_ACCOUNT_ID=
+R2_BUCKET_NAME=
+R2_ACCESS_KEY_ID=
+R2_SECRET_ACCESS_KEY=

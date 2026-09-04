@@ -1,0 +1,28 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "nhadepchat",
+  "account_id": "42db74cdcaddd605975ef143788f303c",
+  "main": "vinext/server/app-router-entry",
+  "compatibility_date": "2026-09-04",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "not_found_handling": "none"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "nhadepchat-db",
+      "database_id": "011378c3-9725-4727-8d46-f37b705e46d8",
+      "migrations_dir": "drizzle"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "FILES",
+      "bucket_name": "nhadepchat-files"
+    }
+  ],
+  "observability": {
+    "enabled": true
+  }
+}

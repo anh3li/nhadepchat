@@ -1,0 +1,3 @@
+import type { Metadata } from 'next';import { MarketplaceHeader } from '../../components/MarketplaceHeader';
+export const metadata:Metadata={title:'Quên mật khẩu | Nhà Đẹp Chất',robots:{index:false,follow:false}};
+export default function ForgotPassword(){return <><MarketplaceHeader/><main className="subpage auth-page"><section className="auth-card"><p className="eyebrow">KHÔI PHỤC TÀI KHOẢN</p><h1>Quên mật khẩu</h1><p>Luồng đặt lại mật khẩu đã được chuẩn bị. Việc gửi email sẽ được bật sau khi cấu hình nhà cung cấp email giao dịch.</p><a className="form-submit" href="/dang-nhap">Quay lại đăng nhập</a></section></main></>}

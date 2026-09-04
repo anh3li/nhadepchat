@@ -1,0 +1,6 @@
+import { z } from 'zod';
+import { getD1 } from '../../../../../db';
+import { apiAdmin } from '../../../../../lib/server-auth';
+
+const schema=z.object({action:z.enum(['approve','reject']),reason:z.string().trim().max(1000).optional()});
+export async function POST(request:Request,{params}:{params:Promise<{id:string}>}){const current=await apiAdmin(request);if('error'in current)return current.error;const parsed=schema.safeParse(await request.json());if(!parsed.success)return Response.json({error:'Yêu cầu không hợp lệ.'},{status:422});if(parsed.data.action==='reject'&&(!parsed.data.reason||parsed.data.reason.length<5))return Response.json({error:'Vui lòng nhập lý do từ chối.'},{status:422});const{id}=await params,db=getD1(),now=Date.now();const result=parsed.data.action==='approve'?await db.prepare("UPDATE products SET status='approved',approved_at=?,rejection_reason=NULL,updated_at=? WHERE id=? AND status='pending'").bind(now,now,id).run():await db.prepare("UPDATE products SET status='rejected',rejection_reason=?,approved_at=NULL,updated_at=? WHERE id=? AND status='pending'").bind(parsed.data.reason,now,id).run();if(!result.meta.changes)return Response.json({error:'Sản phẩm không còn ở trạng thái chờ duyệt.'},{status:409});return Response.json({ok:true});}
