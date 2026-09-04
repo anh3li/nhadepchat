@@ -8,7 +8,7 @@ export const auth = betterAuth({
   secret: env.BETTER_AUTH_SECRET || (process.env.NODE_ENV === 'production' ? undefined : 'local-development-secret-change-me-32chars'),
   baseURL: productionOrigin,
   trustedOrigins: [productionOrigin, 'http://localhost:3000'],
-  emailAndPassword: { enabled: true, minPasswordLength: 8 },
+  emailAndPassword: { enabled: true, minPasswordLength: 12, maxPasswordLength: 128 },
   user: {
     additionalFields: {
       role: { type: ['user', 'seller', 'admin'], required: false, defaultValue: 'user', input: false },
