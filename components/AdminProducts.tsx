@@ -73,12 +73,12 @@ export function AdminProducts() {
       <article key={product.id}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         {product.cover_id ? <img src={`/api/assets/${product.cover_id}`} alt="" /> : <div className="image-placeholder" />}
-        <div><h2>{product.title}</h2><p><a href={`/kts/${product.seller_slug}`}>{product.seller_name}</a> · {product.category} · {product.building_type}</p><p>{product.short_description}</p><p>{product.description}</p>
+        <div><h2>{product.title}</h2><p><a href={`/kts/${product.seller_slug}`}>{product.seller_name}</a> · {product.category} · {product.building_type}</p>{product.short_description&&<p>{product.short_description}</p>}{product.description&&<div className="admin-description" dangerouslySetInnerHTML={{__html:product.description}}/>}
           <small>{product.width || '—'} × {product.length || '—'}m · {product.floors || '—'} tầng · {product.formats || '—'} · {Number(product.price).toLocaleString('vi-VN')}đ</small>
           <small>{product.file_summary || 'Chưa có file'} · {product.submitted_at ? `Gửi ${new Date(product.submitted_at).toLocaleString('vi-VN')}` : 'Chưa gửi duyệt'}</small>
           {rejectId === product.id && <label className="reject-reason">Lý do từ chối<textarea value={reason} onChange={(event) => setReason(event.target.value)} minLength={5} /></label>}
         </div>
-        {status === 'pending' && <footer>{rejectId === product.id ? <><button className="reject" onClick={() => setRejectId(null)}>HỦY</button><button className="approve" onClick={() => moderate(product.id, 'reject')}>XÁC NHẬN</button></> : <><button className="approve" onClick={() => moderate(product.id, 'approve')}>DUYỆT</button><button className="reject" onClick={() => setRejectId(product.id)}>TỪ CHỐI</button></>}</footer>}
+        <footer>{product.cover_id&&<a className="outline-action" href={`/api/assets/${product.cover_id}`} target="_blank" rel="noreferrer">Xem ảnh</a>}{status === 'pending'&&(rejectId === product.id ? <><button className="reject" onClick={() => setRejectId(null)}>HỦY</button><button className="reject confirm" onClick={() => moderate(product.id, 'reject')}>XÁC NHẬN TỪ CHỐI</button></> : <><button className="approve" onClick={() => moderate(product.id, 'approve')}>DUYỆT BÀI</button><button className="reject" onClick={() => setRejectId(product.id)}>TỪ CHỐI</button></>)}</footer>
       </article>) : <div className="empty-state"><h2>Không có sản phẩm</h2><p>Danh sách này hiện đang trống.</p></div>}</section>
   </>;
 }

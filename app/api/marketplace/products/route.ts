@@ -4,9 +4,9 @@ import { allowedDisciplines, allowedFormats, allowedTools, buildingTypes, jsonEr
 import { apiSeller } from '../../../../lib/server-auth';
 
 const productSchema = z.object({
-  id: z.string().uuid().optional(), title: z.string().trim().min(8, 'Tiêu đề cần ít nhất 8 ký tự.').max(160),
+  id: z.string().uuid().optional(), title: z.string().trim().min(1, 'Vui lòng nhập tên hồ sơ.').max(160, 'Tên hồ sơ tối đa 160 ký tự.'),
   category: z.enum(buildingTypes), buildingType: z.enum(buildingTypes), style: z.enum(productStyles),
-  shortDescription: z.string().trim().max(200), description: z.string(),
+  shortDescription: z.string().trim().max(300, 'Mô tả ngắn tối đa 300 ký tự.'), description: z.string(),
   width: z.coerce.number().positive().max(1000).nullable().optional(), length: z.coerce.number().positive().max(1000).nullable().optional(),
   floors: z.coerce.number().int().positive().max(200).nullable().optional(), area: z.coerce.number().positive().max(1000000).nullable().optional(),
   isFree: z.boolean(), price: z.coerce.number().int().min(0).max(100000000),
@@ -39,7 +39,7 @@ async function save(request: Request, editing: boolean) {
   const current = await apiSeller(request); if ('error' in current) return current.error;
   const parsed = productSchema.safeParse(await request.json()); if (!parsed.success) return jsonError(parsed.error.issues[0].message,422);
   const data=parsed.data, formats=parseList(data.formats,allowedFormats), disciplines=parseList(data.disciplines,allowedDisciplines), tools=parseList(data.tools,allowedTools), keywords=parseKeywords(data.keywords), description=sanitizeDescription(data.description);
-  if (!data.isFree && data.price > 0 && data.price < 1000) return jsonError('Giá trả phí phải từ 1.000đ.',422);
+  if (!data.isFree && data.price <= 0) return jsonError('Sản phẩm trả phí cần có giá lớn hơn 0đ.',422);
   const db=getD1(), now=Date.now(), id=data.id||crypto.randomUUID();
   if (editing) {
     const owned=await db.prepare('SELECT id,status FROM products WHERE id=? AND seller_id=?').bind(id,current.seller.id).first<{id:string;status:string}>();

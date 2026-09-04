@@ -3,7 +3,7 @@
   "name": "nhadepchat",
   "account_id": "552871ebd2080e7e542c1d6623d461f7",
   "main": "vinext/server/app-router-entry",
-  "compatibility_date": "2026-09-04",
+  "compatibility_date": "2026-05-22",
   "compatibility_flags": ["nodejs_compat"],
   "assets": {
     "not_found_handling": "none"

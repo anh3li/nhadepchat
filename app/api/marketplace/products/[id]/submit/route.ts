@@ -16,11 +16,10 @@ export async function POST(request:Request,{params}:{params:Promise<{id:string}>
   if(!product)return jsonError('Không tìm thấy sản phẩm.',404);
   if(!['draft','rejected'].includes(product.status))return jsonError('Sản phẩm không thể gửi duyệt ở trạng thái hiện tại.',409);
   if(!product.assets||!product.files)return jsonError('Cần ít nhất một ảnh preview và một file hồ sơ trước khi gửi duyệt.',422);
-  const description=String(product.description||'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();
-  if(String(product.title).trim().length<12||!product.category||!product.building_type||!product.style||String(product.short_description||'').trim().length<80||String(product.short_description||'').length>200||description.length<50)return jsonError('Vui lòng hoàn thiện thông tin và mô tả hồ sơ trước khi gửi duyệt.',422);
-  if(!product.formats||!product.disciplines||!product.tools)return jsonError('Cần chọn định dạng, hạng mục và công cụ sử dụng.',422);
-  if(product.keywords<3||product.keywords>8)return jsonError('Cần nhập từ 3 đến 8 từ khóa.',422);
-  if(!product.is_free&&product.price<1000)return jsonError('Sản phẩm trả phí cần có giá hợp lệ.',422);
+  if(!String(product.title).trim())return jsonError('Vui lòng nhập tên hồ sơ.',422);
+  if(!product.category||!product.building_type)return jsonError('Vui lòng chọn loại công trình.',422);
+  if(String(product.short_description||'').length>300)return jsonError('Mô tả ngắn tối đa 300 ký tự.',422);
+  if(!product.is_free&&product.price<=0)return jsonError('Sản phẩm trả phí cần có giá lớn hơn 0đ.',422);
   const[declared,uploaded]=await Promise.all([db.prepare('SELECT format FROM product_formats WHERE product_id=?').bind(id).all<{format:string}>(),db.prepare('SELECT DISTINCT UPPER(extension) format FROM product_files WHERE product_id=?').bind(id).all<{format:string}>()]);
   const uploadedFormats=new Set(uploaded.results.map(row=>row.format)),archive=uploadedFormats.has('ZIP')||uploadedFormats.has('RAR');
   if(!archive&&declared.results.some(row=>!uploadedFormats.has(row.format)))return jsonError('Định dạng đã khai báo chưa khớp với file đã upload.',422);

@@ -8,7 +8,7 @@ const configPath = resolve(tempDir, 'local-d1-config.jsonc');
 const wrangler = resolve(root, 'node_modules', 'wrangler', 'bin', 'wrangler.js');
 const config = {
   name: 'nha-dep-chat-local-db',
-  compatibility_date: '2026-09-04',
+  compatibility_date: '2026-05-22',
   d1_databases: [{
     binding: 'DB', database_name: 'site-creator-d1',
     database_id: '00000000-0000-4000-8000-000000000000', migrations_dir: '../drizzle',
