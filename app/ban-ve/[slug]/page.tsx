@@ -9,7 +9,7 @@ import { getD1 } from '../../../db';
 import { productSelect } from '../../../lib/marketplace';
 
 export const dynamic='force-dynamic';
-const origin='https://kho-ban-ve-nha-dep.tranvukim-tvk.chatgpt.site';
+const origin='https://nhadepchat.tranvukim-tvk.workers.dev';
 async function getProduct(slug:string){return getD1().prepare(`${productSelect()} WHERE p.slug=? AND p.status='approved' LIMIT 1`).bind(slug).first<Record<string,any>>()}
 export async function generateMetadata({params}:{params:Promise<{slug:string}>}):Promise<Metadata>{const{slug}=await params,p=await getProduct(slug);if(!p)return{title:'Không tìm thấy bản vẽ',robots:{index:false,follow:false}};const description=String(p.short_description||'').slice(0,160);return{title:`${p.title} | Nhà Đẹp Chất`,description,alternates:{canonical:`${origin}/ban-ve/${slug}`},openGraph:{title:p.title,description,url:`${origin}/ban-ve/${slug}`,images:p.cover_id?[`${origin}/api/assets/${p.cover_id}`]:[]}}}
 

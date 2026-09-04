@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 export const metadata: Metadata = {
-  metadataBase: new URL('https://kho-ban-ve-nha-dep.tranvukim-tvk.chatgpt.site'),
+  metadataBase: new URL('https://nhadepchat.tranvukim-tvk.workers.dev'),
   title: 'Nhà Đẹp Chất | Mẫu nhà, bản vẽ và kiến trúc sư',
   description: 'Marketplace bản vẽ kiến trúc, kết cấu, MEP và dự toán từ cộng đồng KTS và kỹ sư.',
   openGraph: {
