@@ -25,7 +25,7 @@ button, input, select { font: inherit; }
 .logo-mark i { position: absolute; bottom: 0; left: 16px; width: 7px; height: 13px; background: var(--blue); }
 .logo b { display: block; color: var(--blue); font-size: 18px; letter-spacing: .15px; }
 .logo small { display: block; margin-top: 5px; color: #7f8996; font-size: 9px; letter-spacing: .85px; }
-.search { display: flex; overflow: hidden; height: 44px; background: var(--soft); border: 1px solid #d9e0e8; border-radius: 5px; }
+.search { display: flex; overflow: hidden; width: 100%; min-width: 0; height: 44px; background: var(--soft); border: 1px solid #d9e0e8; border-radius: 5px; }
 .search:focus-within { background: #fff; border-color: var(--blue2); box-shadow: 0 0 0 3px #245f9f13; }
 .search input { flex: 1; min-width: 0; padding: 0 16px; background: transparent; border: 0; outline: 0; font-size: 15px; }
 .search button { display: grid; place-items: center; width: 48px; color: #fff; background: var(--blue); border: 0; cursor: pointer; }
@@ -41,7 +41,7 @@ button, input, select { font: inherit; }
 .account-link > span { display: grid; place-items: center; width: 28px; height: 28px; color: var(--blue); border: 1px solid #ccd4de; border-radius: 50%; font-size: 10px; }
 .menu-toggle { display: none; place-items: center; padding: 0; background: none; border: 0; color: var(--blue); cursor: pointer; }
 
-.mega-menu { position: absolute; top: calc(100% - 1px); left: -310px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 0 22px; width: 750px; padding: 19px 22px 13px; background: #fff; border: 1px solid var(--line); border-radius: 0 0 6px 6px; box-shadow: 0 16px 38px #1722341a; }
+.mega-menu { position: absolute; top: calc(100% - 1px); left: -310px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 0 22px; width: 750px; max-width: calc(100vw - 28px); padding: 19px 22px 13px; background: #fff; border: 1px solid var(--line); border-radius: 0 0 6px 6px; box-shadow: 0 16px 38px #1722341a; }
 .mega-menu section + section { padding-left: 22px; border-left: 1px solid var(--line); }
 .mega-menu h3, .community-menu h3 { margin: 0 0 8px; color: var(--blue); font-size: 11px; letter-spacing: 1px; text-transform: uppercase; }
 .mega-link { display: grid; grid-template-columns: 20px 1fr; align-items: center; min-height: 26px; color: #475367; font-size: 13px; line-height: 1.5; }
@@ -169,16 +169,19 @@ footer { padding: 22px 0; color: #dce7f3; background: #112e51; }
   .popular-row > b { grid-column: 2; }
 }
 
-@media (max-width: 1000px) {
-  .shell { width: min(100% - 28px, 1490px); }
-  .header-inner { grid-template-columns: 175px 1fr 36px; }
-  .main-nav { position: absolute; top: 75px; right: 0; left: 0; display: none; flex-direction: column; align-items: stretch; height: auto; padding: 8px 14px; background: #fff; border-bottom: 1px solid var(--line); }
+@media (max-width: 1180px) {
+  .header-inner { grid-template-columns: 175px minmax(0, 1fr) 36px; }
+  .main-nav { position: absolute; top: 75px; right: 0; left: 0; display: none; flex-direction: column; align-items: stretch; overflow-y: auto; height: auto; max-height: calc(100vh - 76px); padding: 8px 14px; background: #fff; border-bottom: 1px solid var(--line); }
   .main-nav.mobile-open { display: flex; }
   .main-nav > a, .nav-group > button { justify-content: flex-start; width: 100%; height: 39px; font-size: 14px; }
   .nav-group { height: auto; }
   .menu-toggle { display: grid; }
-  .mega-menu { position: static; left: auto; grid-template-columns: repeat(3, 1fr); width: 100%; padding: 15px; border: 0; border-top: 1px solid var(--line); box-shadow: none; }
+  .mega-menu { position: static; left: auto; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; max-width: none; padding: 15px; border: 0; border-top: 1px solid var(--line); box-shadow: none; }
   .community-menu { position: static; left: auto; grid-template-columns: 1fr 1fr; width: 100%; padding: 15px; border: 0; border-top: 1px solid var(--line); box-shadow: none; }
+}
+
+@media (max-width: 1000px) {
+  .shell { width: min(100% - 28px, 1490px); }
   .marketplace { grid-template-columns: 1fr; grid-template-areas: 'hero' 'architects' 'drawings' 'popular' 'collections'; gap: 24px; }
   .hero-main { min-height: 400px; height: auto; }
   .architect-panel { height: auto; }
