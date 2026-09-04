@@ -1,12 +1,12 @@
 import { env } from 'cloudflare:workers';
 import { betterAuth } from 'better-auth';
 
-const productionOrigin = 'https://kho-ban-ve-nha-dep.tranvukim-tvk.chatgpt.site';
+const productionOrigin = env.BETTER_AUTH_URL || 'http://localhost:3000';
 
 export const auth = betterAuth({
   database: env.DB,
   secret: env.BETTER_AUTH_SECRET || (process.env.NODE_ENV === 'production' ? undefined : 'local-development-secret-change-me-32chars'),
-  baseURL: env.BETTER_AUTH_URL || (process.env.NODE_ENV === 'production' ? productionOrigin : 'http://localhost:3000'),
+  baseURL: productionOrigin,
   trustedOrigins: [productionOrigin, 'http://localhost:3000'],
   emailAndPassword: { enabled: true, minPasswordLength: 8 },
   user: {
