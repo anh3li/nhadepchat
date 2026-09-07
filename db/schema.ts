@@ -86,6 +86,23 @@ export const downloads = sqliteTable('downloads', {
   id: text('id').primaryKey(), userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }), productId: text('product_id').notNull().references(() => products.id, { onDelete: 'cascade' }), createdAt: integer('created_at').notNull(),
 }, (table) => [index('idx_downloads_product_created').on(table.productId, table.createdAt), index('idx_downloads_user_created').on(table.userId, table.createdAt)]);
 
+export const productViews = sqliteTable('product_views', {
+  id: text('id').primaryKey(), productId: text('product_id').notNull().references(() => products.id, { onDelete: 'cascade' }),
+  viewerKey: text('viewer_key').notNull(), viewedOn: integer('viewed_on').notNull(), createdAt: integer('created_at').notNull(),
+}, (table) => [uniqueIndex('product_views_daily_unique').on(table.productId, table.viewerKey, table.viewedOn), index('idx_product_views_product_created').on(table.productId, table.createdAt)]);
+
+export const productReviews = sqliteTable('product_reviews', {
+  id: text('id').primaryKey(), productId: text('product_id').notNull().references(() => products.id, { onDelete: 'cascade' }),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }), rating: integer('rating').notNull(),
+  comment: text('comment').notNull().default(''), createdAt: integer('created_at').notNull(), updatedAt: integer('updated_at').notNull(),
+}, (table) => [uniqueIndex('product_reviews_user_unique').on(table.productId, table.userId), index('idx_product_reviews_product_updated').on(table.productId, table.updatedAt)]);
+
+export const sellerReviews = sqliteTable('seller_reviews', {
+  id: text('id').primaryKey(), sellerId: text('seller_id').notNull().references(() => sellerProfiles.id, { onDelete: 'cascade' }),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }), rating: integer('rating').notNull(),
+  comment: text('comment').notNull().default(''), createdAt: integer('created_at').notNull(), updatedAt: integer('updated_at').notNull(),
+}, (table) => [uniqueIndex('seller_reviews_user_unique').on(table.sellerId, table.userId), index('idx_seller_reviews_seller_updated').on(table.sellerId, table.updatedAt)]);
+
 export const favorites = sqliteTable('favorites', {
   id: text('id').primaryKey(), userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }), productId: text('product_id').notNull().references(() => products.id, { onDelete: 'cascade' }), createdAt: integer('created_at').notNull(),
 }, (table) => [uniqueIndex('favorites_user_product_unique').on(table.userId, table.productId), index('idx_favorites_user_created').on(table.userId, table.createdAt), index('idx_favorites_product_id').on(table.productId)]);

@@ -79,6 +79,9 @@ export function productSelect() {
     (SELECT object_key FROM product_assets pa WHERE pa.product_id=p.id ORDER BY CASE WHEN pa.type='cover' THEN 0 ELSE 1 END, pa.sort_order LIMIT 1) cover_key,
     (SELECT id FROM product_assets pa WHERE pa.product_id=p.id ORDER BY CASE WHEN pa.type='cover' THEN 0 ELSE 1 END, pa.sort_order LIMIT 1) cover_id,
     (SELECT GROUP_CONCAT(format, ' · ') FROM product_formats pf WHERE pf.product_id=p.id) formats,
-    (SELECT COUNT(*) FROM downloads d WHERE d.product_id=p.id) download_count
+    (SELECT COUNT(*) FROM downloads d WHERE d.product_id=p.id) download_count,
+    (SELECT COUNT(*) FROM product_views pv WHERE pv.product_id=p.id) view_count,
+    (SELECT ROUND(AVG(pr.rating),1) FROM product_reviews pr WHERE pr.product_id=p.id) rating,
+    (SELECT COUNT(*) FROM product_reviews pr WHERE pr.product_id=p.id) review_count
     FROM products p JOIN seller_profiles sp ON sp.id=p.seller_id JOIN user_profiles up ON up.user_id=sp.user_id`;
 }
