@@ -13,6 +13,22 @@ export async function requireSession(returnTo = '/dashboard') {
   return session;
 }
 
+export async function getWorkspaceAccess(userId: string) {
+  const row = await getD1().prepare(`
+    SELECT up.role, up.avatar_key,
+      CASE WHEN sp.id IS NULL THEN 0 ELSE 1 END AS is_seller
+    FROM user_profiles up
+    LEFT JOIN seller_profiles sp ON sp.user_id=up.user_id
+    WHERE up.user_id=?
+  `).bind(userId).first<{ role: string; avatar_key: string | null; is_seller: number }>();
+  return {
+    role: row?.role || 'user',
+    avatarKey: row?.avatar_key || null,
+    seller: row?.is_seller === 1,
+    admin: row?.role === 'admin',
+  };
+}
+
 export async function requireSeller(returnTo = '/dashboard') {
   const session = await requireSession(returnTo);
   const profile = await getD1().prepare('SELECT sp.*, up.slug, up.display_name, up.bio, up.avatar_key, up.role FROM seller_profiles sp JOIN user_profiles up ON up.user_id=sp.user_id WHERE sp.user_id=?').bind(session.user.id).first<Record<string, unknown>>();

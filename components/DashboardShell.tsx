@@ -1,25 +1,48 @@
 'use client';
 /* eslint-disable @next/next/no-html-link-for-pages */
 
-import { Download, FileText, Heart, LayoutDashboard, Menu, PlusSquare, Settings, ShieldCheck, UserRound, X } from 'lucide-react';
+import { Download, FileText, Heart, Home, LayoutDashboard, Menu, PlusSquare, Settings, ShieldCheck, Store, UserRound, X } from 'lucide-react';
 import { ReactNode, useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 
-const links = [
-  ['/dashboard', 'Tổng quan', LayoutDashboard],
-  ['/tai-khoan', 'Hồ sơ của tôi', UserRound],
-  ['/dashboard/san-pham', 'Sản phẩm', FileText],
-  ['/dashboard/dang-ban', 'Đăng sản phẩm', PlusSquare],
-  ['/tai-khoan/da-luu', 'Đã lưu', Heart],
-  ['/dashboard/luot-tai', 'Lượt tải', Download],
-  ['/tai-khoan/doi-mat-khau', 'Đăng nhập & bảo mật', Settings],
-] as const;
+type NavItem = readonly [href: string, label: string, icon: typeof UserRound];
 
-export function DashboardShell({ children, name, admin = false }: { children: ReactNode; name: string; admin?: boolean }) {
+const accountLinks: readonly NavItem[] = [
+  ['/tai-khoan', 'Hồ sơ cá nhân', UserRound],
+  ['/tai-khoan/da-luu', 'Bản vẽ đã lưu', Heart],
+  ['/tai-khoan/doi-mat-khau', 'Đăng nhập & bảo mật', Settings],
+];
+
+const sellerLinks: readonly NavItem[] = [
+  ['/dashboard', 'Tổng quan', LayoutDashboard],
+  ['/dashboard/san-pham', 'Sản phẩm của tôi', FileText],
+  ['/dashboard/dang-ban', 'Đăng sản phẩm', PlusSquare],
+  ['/dashboard/luot-tai', 'Lượt tải', Download],
+];
+
+function isActive(pathname: string, href: string) {
+  if (href === '/dashboard') return pathname === href;
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
+function NavGroup({ label, items, pathname }: { label: string; items: readonly NavItem[]; pathname: string }) {
+  return <div className="dashboard-nav-group">
+    <span>{label}</span>
+    {items.map(([href, itemLabel, Icon]) => {
+      const active = isActive(pathname, href);
+      return <a key={href} href={href} className={active ? 'active' : ''} aria-current={active ? 'page' : undefined}>
+        <Icon size={18} strokeWidth={1.8} />{itemLabel}
+      </a>;
+    })}
+  </div>;
+}
+
+export function DashboardShell({ children, name, admin = false, seller = true }: { children: ReactNode; name: string; admin?: boolean; seller?: boolean }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const sidebar = useRef<HTMLElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
+
   useEffect(() => {
     if (!open) return;
     const previous = document.body.style.overflow;
@@ -36,17 +59,22 @@ export function DashboardShell({ children, name, admin = false }: { children: Re
     document.addEventListener('keydown', handleKey);
     return () => { document.body.style.overflow = previous; document.removeEventListener('keydown', handleKey); };
   }, [open]);
+
+  const roleLabel = admin ? 'Quản trị viên' : seller ? 'Người bán' : 'Thành viên';
+
   return <div className="dashboard-layout">
     <button ref={trigger} type="button" className="dashboard-menu" aria-expanded={open} aria-controls="dashboard-navigation" onClick={() => setOpen(true)}><Menu size={20} />Không gian làm việc</button>
     {open && <button type="button" className="dashboard-overlay" aria-label="Đóng menu" onClick={() => { setOpen(false); trigger.current?.focus(); }} />}
     <aside ref={sidebar} id="dashboard-navigation" className={`dashboard-sidebar${open ? ' open' : ''}`}>
       <button type="button" className="dashboard-close" aria-label="Đóng menu" onClick={() => { setOpen(false); trigger.current?.focus(); }}><X /></button>
-      <a className="dashboard-brand" href="/">NHÀ ĐẸP CHẤT<small>{admin ? 'KHU VỰC QUẢN TRỊ' : 'KHÔNG GIAN NGƯỜI BÁN'}</small></a>
+      <a className="dashboard-brand" href="/">NHÀ ĐẸP CHẤT<small>KHÔNG GIAN LÀM VIỆC</small></a>
       <nav aria-label="Điều hướng không gian làm việc">
-        {admin && <a className={`admin-nav-link${pathname.startsWith('/admin') ? ' active' : ''}`} href="/admin/san-pham" aria-current={pathname.startsWith('/admin') ? 'page' : undefined}><ShieldCheck size={18} strokeWidth={1.8} />Duyệt bài</a>}
-        {links.map(([href, label, Icon]) => <a key={href} href={href} className={pathname === href ? 'active' : ''} aria-current={pathname === href ? 'page' : undefined}><Icon size={18} strokeWidth={1.8} />{label}</a>)}
+        {seller && <NavGroup label="NGƯỜI BÁN" items={sellerLinks} pathname={pathname} />}
+        {!seller && <div className="dashboard-nav-group"><span>NGƯỜI BÁN</span><a href="/dang-ban"><Store size={18} strokeWidth={1.8} />Bắt đầu đăng bán</a></div>}
+        <NavGroup label="TÀI KHOẢN" items={accountLinks} pathname={pathname} />
+        {admin && <div className="dashboard-nav-group"><span>QUẢN TRỊ</span><a className={pathname.startsWith('/admin') ? 'active admin-nav-link' : 'admin-nav-link'} href="/admin/san-pham" aria-current={pathname.startsWith('/admin') ? 'page' : undefined}><ShieldCheck size={18} strokeWidth={1.8} />Duyệt sản phẩm</a></div>}
       </nav>
-      <p><b>{name}</b><span>{admin ? 'Quản trị viên' : 'Người bán'}</span><a href="/">Về trang chủ</a></p>
+      <div className="dashboard-user"><b>{name}</b><span>{roleLabel}</span><a href="/"><Home size={14} strokeWidth={1.8} />Về trang chủ</a></div>
     </aside>
     <main className="dashboard-main">{children}</main>
   </div>;
