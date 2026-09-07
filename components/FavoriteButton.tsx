@@ -2,6 +2,7 @@
 
 import { MouseEvent, useEffect, useState } from 'react';
 import { Heart } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 let ids = new Set<string>();
 let authenticated = false;
@@ -20,12 +21,13 @@ function load() {
 }
 
 export function FavoriteButton({ productId, returnUrl, className = 'save' }: { productId: string; returnUrl?: string; className?: string }) {
+  const router = useRouter();
   const [, rerender] = useState(0); const [busy, setBusy] = useState(false); const saved = ids.has(productId);
   useEffect(() => { const fn=()=>rerender(v=>v+1); listeners.add(fn); void load(); return()=>{listeners.delete(fn)}; }, []);
   async function toggle(event: MouseEvent<HTMLButtonElement>) {
     event.preventDefault(); event.stopPropagation(); if (busy) return;
     await load();
-    if (!authenticated) { const back=returnUrl||location.pathname+location.search+location.hash; location.assign(`/dang-nhap?returnTo=${encodeURIComponent(back)}`); return; }
+    if (!authenticated) { const back=returnUrl||location.pathname+location.search+location.hash; router.push(`/dang-nhap?returnTo=${encodeURIComponent(back)}`); return; }
     const previous=ids.has(productId); if(previous)ids.delete(productId);else ids.add(productId); notify(); setBusy(true);
     try { const response=await fetch('/api/favorites',{method:previous?'DELETE':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({productId})}); if(!response.ok) throw new Error(); }
     catch { if(previous)ids.add(productId);else ids.delete(productId); notify(); }

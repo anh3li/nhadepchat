@@ -1,9 +1,10 @@
 import { getD1 } from '../../../../db';
 import { productSelect } from '../../../../lib/marketplace';
 
-export async function GET(){const db=getD1();const [products,architects,popular,collectionCounts]=await Promise.all([
+export async function GET(){const db=getD1();const [products,architects,popular,collectionCounts,platformStats]=await Promise.all([
   db.prepare(`${productSelect()} WHERE p.status='approved' ORDER BY p.approved_at DESC LIMIT 10`).all(),
   db.prepare(`SELECT up.slug,up.display_name,up.avatar_key,sp.id,sp.professional_title,sp.verification_status,COUNT(DISTINCT p.id) file_count,COUNT(DISTINCT d.id) download_count,(SELECT ROUND(AVG(sr.rating),1) FROM seller_reviews sr WHERE sr.seller_id=sp.id) rating,(SELECT COUNT(*) FROM seller_reviews sr WHERE sr.seller_id=sp.id) review_count FROM seller_profiles sp JOIN user_profiles up ON up.user_id=sp.user_id LEFT JOIN products p ON p.seller_id=sp.id AND p.status='approved' LEFT JOIN downloads d ON d.product_id=p.id GROUP BY sp.id ORDER BY rating DESC,file_count DESC,download_count DESC LIMIT 4`).all(),
   db.prepare(`${productSelect()} WHERE p.status='approved' ORDER BY download_count DESC,p.approved_at DESC LIMIT 5`).all(),
   db.prepare(`SELECT SUM(CASE WHEN building_type='Nhà phố' AND width=5 THEN 1 ELSE 0 END) 'nha-pho-5m',SUM(CASE WHEN building_type LIKE '%Biệt thự%' AND floors=2 THEN 1 ELSE 0 END) 'biet-thu-2-tang',SUM(CASE WHEN (building_type LIKE '%Nhà cấp 4%' OR title LIKE '%Nhà cấp 4%') THEN 1 ELSE 0 END) 'nha-cap-4-dep',SUM(CASE WHEN (building_type LIKE '%Nhà xưởng%' OR title LIKE '%Nhà xưởng%') THEN 1 ELSE 0 END) 'nha-xuong-tieu-chuan',SUM(CASE WHEN category LIKE '%Kết cấu%' THEN 1 ELSE 0 END) 'file-ket-cau-hay' FROM products WHERE status='approved'`).first(),
-]);return Response.json({products:products.results,architects:architects.results,popular:popular.results,collections:collectionCounts||{}},{headers:{'Cache-Control':'public, max-age=60'}});}
+  db.prepare(`SELECT (SELECT COUNT(*) FROM products WHERE status='approved') product_count,(SELECT COUNT(*) FROM products WHERE status='approved' AND is_free=1) free_count,(SELECT COUNT(*) FROM seller_profiles) seller_count,(SELECT COUNT(*) FROM downloads) download_count`).first(),
+]);return Response.json({products:products.results,architects:architects.results,popular:popular.results,collections:collectionCounts||{},stats:platformStats||{}},{headers:{'Cache-Control':'public, max-age=60'}});}

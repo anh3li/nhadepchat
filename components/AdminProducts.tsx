@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 
 type Product = {
   id: string;
@@ -73,7 +74,7 @@ export function AdminProducts() {
       <article key={product.id}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         {product.cover_id ? <img src={`/api/assets/${product.cover_id}`} alt="" /> : <div className="image-placeholder" />}
-        <div><h2>{product.title}</h2><p><a href={`/kts/${product.seller_slug}`}>{product.seller_name}</a> · {product.category} · {product.building_type}</p>{product.short_description&&<p>{product.short_description}</p>}{product.description&&<div className="admin-description" dangerouslySetInnerHTML={{__html:product.description}}/>}
+        <div><h2>{product.title}</h2><p><Link href={`/kts/${product.seller_slug}`}>{product.seller_name}</Link> · {product.category} · {product.building_type}</p>{product.short_description&&<p>{product.short_description}</p>}{product.description&&<div className="admin-description" dangerouslySetInnerHTML={{__html:product.description}}/>}
           <small>{product.width || '—'} × {product.length || '—'}m · {product.floors || '—'} tầng · {product.formats || '—'} · {Number(product.price).toLocaleString('vi-VN')}đ</small>
           <small>{product.file_summary || 'Chưa có file'} · {product.submitted_at ? `Gửi ${new Date(product.submitted_at).toLocaleString('vi-VN')}` : 'Chưa gửi duyệt'}</small>
           {rejectId === product.id && <label className="reject-reason">Lý do từ chối<textarea value={reason} onChange={(event) => setReason(event.target.value)} minLength={5} /></label>}

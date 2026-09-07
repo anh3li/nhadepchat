@@ -86,6 +86,11 @@ export const downloads = sqliteTable('downloads', {
   id: text('id').primaryKey(), userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }), productId: text('product_id').notNull().references(() => products.id, { onDelete: 'cascade' }), createdAt: integer('created_at').notNull(),
 }, (table) => [index('idx_downloads_product_created').on(table.productId, table.createdAt), index('idx_downloads_user_created').on(table.userId, table.createdAt)]);
 
+export const cartItems = sqliteTable('cart_items', {
+  id: text('id').primaryKey(), userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  productId: text('product_id').notNull().references(() => products.id, { onDelete: 'cascade' }), createdAt: integer('created_at').notNull(),
+}, (table) => [uniqueIndex('cart_items_user_product_unique').on(table.userId, table.productId), index('idx_cart_items_user_created').on(table.userId, table.createdAt)]);
+
 export const productViews = sqliteTable('product_views', {
   id: text('id').primaryKey(), productId: text('product_id').notNull().references(() => products.id, { onDelete: 'cascade' }),
   viewerKey: text('viewer_key').notNull(), viewedOn: integer('viewed_on').notNull(), createdAt: integer('created_at').notNull(),

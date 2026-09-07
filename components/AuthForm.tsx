@@ -5,6 +5,7 @@ import { Eye, EyeOff } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { authClient } from '../lib/auth-client';
 import { authReturnPath } from '../lib/auth-return-path';
+import Link from 'next/link';
 
 function authError(message?: string) {
   const normalized = (message || '').toLowerCase();
@@ -55,7 +56,7 @@ export function AuthForm({ mode, googleEnabled = false }: { mode: 'login' | 'reg
     {params.get('changed') === '1' && <p className="form-success" role="status">Đã đổi mật khẩu. Vui lòng đăng nhập lại.</p>}
     {error && <p className="form-error" role="alert">{error}</p>}
     <button className="form-submit" disabled={loading}>{loading ? 'Đang xử lý…' : register ? 'Tạo tài khoản' : 'Đăng nhập'}</button>
-    {!register && <a className="forgot-link" href="/quen-mat-khau">Quên mật khẩu?</a>}
-    <p>{register ? 'Đã có tài khoản?' : 'Chưa có tài khoản?'} <a href={register ? '/dang-nhap' : '/dang-ky'}>{register ? 'Đăng nhập' : 'Đăng ký'}</a></p>
+    {!register && <Link className="forgot-link" href="/quen-mat-khau">Quên mật khẩu?</Link>}
+    <p>{register ? 'Đã có tài khoản?' : 'Chưa có tài khoản?'} <Link href={register ? '/dang-nhap' : '/dang-ky'}>{register ? 'Đăng nhập' : 'Đăng ký'}</Link></p>
   </form>;
 }
