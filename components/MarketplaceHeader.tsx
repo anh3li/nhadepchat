@@ -3,6 +3,7 @@
 
 import { FormEvent, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { ArrowRight, Building, Building2, ChevronDown, Download, DraftingCompass, Droplets, Factory, FileText, Heart, Home, House, Landmark, Layers3, LayoutDashboard, LogIn, LogOut, Menu, PackageCheck, School, Search, Settings, ShoppingCart, Store, UserPlus, UserRound, X, Zap, type LucideIcon } from 'lucide-react';
 import { authClient } from '../lib/auth-client';
 
@@ -27,7 +28,7 @@ export function MarketplaceHeader(){
     <form className="search" role="search" onSubmit={search}><input type="search" name="q" aria-label="Tìm kiếm bản vẽ" placeholder="Tìm nhà 5x20, biệt thự 2 tầng, file CAD..."/><button type="submit" aria-label="Tìm kiếm"><Search aria-hidden size={20} strokeWidth={1.8}/></button></form>
     <nav className={mobile?'main-nav mobile-open':'main-nav'} aria-label="Điều hướng chính">
       <div className="nav-group"><button type="button" className={menu==='drawings'?'open':''} aria-expanded={menu==='drawings'} onClick={()=>setMenu(menu==='drawings'?null:'drawings')}>Bản vẽ<ChevronDown className="nav-chevron" size={15} strokeWidth={1.8}/></button>{menu==='drawings'&&<MegaMenu/>}</div>
-      <a href="/#collections">Bộ sưu tập</a>
+      <Link href="/bo-suu-tap">Bộ sưu tập</Link>
       <div className="nav-group community"><button type="button" className={menu==='community'?'open':''} aria-expanded={menu==='community'} onClick={()=>setMenu(menu==='community'?null:'community')}>Cộng đồng<ChevronDown className="nav-chevron" size={15} strokeWidth={1.8}/></button>{menu==='community'&&<CommunityMenu/>}</div>
       <a href="/dang-ban">Đăng bán</a><a className="nav-cart" href="#cart"><ShoppingCart size={17}/>Giỏ hàng<i>0</i></a>
       <div className="nav-group account-group"><button type="button" className={`account-trigger${menu==='account'?' open':''}`} aria-expanded={menu==='account'} onClick={()=>setMenu(menu==='account'?null:'account')}><span className="header-avatar">{viewer?.avatar_key?<img src={`/api/profile-avatar/${viewer.user_id}`} alt=""/>:initials}</span><span>{viewer?.display_name||'Tài khoản'}</span><ChevronDown className="nav-chevron" size={15} strokeWidth={1.8}/></button>{menu==='account'&&<AccountDropdown viewer={viewer} logout={logout}/>}</div>
@@ -37,7 +38,7 @@ export function MarketplaceHeader(){
 }
 
 function MegaMenu(){return <div className="mega-menu">{groups.map(group=><section key={group.title}><h3>{group.title}</h3>{group.items.map(item=>{const Icon=icons[item];return <a className="mega-link" href={`/tim-kiem?q=${encodeURIComponent(item)}`} key={item}><span className="menu-icon-slot">{Icon&&<Icon size={16} strokeWidth={1.8}/>}</span>{item}</a>})}</section>)}<a className="menu-view-all" href="/tim-kiem">Xem tất cả bản vẽ<ArrowRight size={15}/></a></div>}
-function CommunityMenu(){return <div className="community-menu"><section><h3>KIẾN TRÚC SƯ</h3>{['Danh sách KTS','KTS nổi bật','KTS mới tham gia'].map(item=><a href="/#architects" key={item}>{item}</a>)}</section><section><h3>CỘNG ĐỒNG</h3>{['Kỹ sư','Nhà thiết kế nội thất','Nhà thầu','Hoạt động mới','Yêu cầu bản vẽ'].map(item=><a href="/#architects" key={item}>{item}</a>)}</section></div>}
+function CommunityMenu(){return <div className="community-menu"><section><h3>KIẾN TRÚC SƯ</h3><Link href="/cong-dong">Danh sách KTS</Link><Link href="/cong-dong?sap-xep=noi-bat">KTS nổi bật</Link><Link href="/cong-dong?sap-xep=moi">KTS mới tham gia</Link></section><section><h3>CỘNG ĐỒNG</h3><Link href="/cong-dong?vai-tro=engineer">Kỹ sư</Link><Link href="/cong-dong?vai-tro=interior_designer">Nhà thiết kế nội thất</Link><Link href="/cong-dong?vai-tro=contractor">Nhà thầu</Link><Link href="/cong-dong?sap-xep=moi">Hoạt động mới</Link><Link href="/cong-dong#yeu-cau-ban-ve">Yêu cầu bản vẽ</Link></section></div>}
 function AccountDropdown({viewer,logout}:{viewer:Viewer|null|undefined;logout:()=>void}){
   if(viewer===undefined)return <div className="account-menu loading"><span>Đang tải...</span></div>;
   if(!viewer)return <div className="account-menu"><header><b>Chào mừng bạn</b><span>Đăng nhập để lưu và tải bản vẽ.</span></header><a href="/dang-nhap"><LogIn/>Đăng nhập</a><a href="/dang-ky"><UserPlus/>Đăng ký</a><a href="/dang-ban"><Store/>Đăng bán hồ sơ</a></div>;
