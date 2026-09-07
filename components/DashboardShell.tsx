@@ -21,7 +21,7 @@ const sellerLinks: readonly NavItem[] = [
 ];
 
 function isActive(pathname: string, href: string) {
-  if (href === '/dashboard') return pathname === href;
+  if (href === '/dashboard' || href === '/tai-khoan') return pathname === href;
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
