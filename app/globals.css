@@ -413,6 +413,8 @@ footer { padding: 22px 0; color: #dce7f3; background: #112e51; }
 .profile-about { margin-bottom: 30px; }.profile-about h2 { font-size: 18px; }.profile-about p { max-width: 780px; color: #536175; white-space: pre-line; }
 
 .product-detail-page { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(350px, .8fr); gap: 30px; }
+.detail-back { grid-column: 1 / -1; display: inline-flex; align-items: center; justify-self: start; gap: 7px; margin-bottom: -16px; padding: 7px 0; color: var(--blue2); background: transparent; border: 0; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
+.detail-back:hover { color: var(--blue); }
 .detail-gallery { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; align-content: start; }.detail-gallery img { width: 100%; aspect-ratio: 16/11; object-fit: cover; border-radius: 6px; }.detail-gallery img:first-child { grid-column: 1 / -1; }
 .detail-summary { align-self: start; padding: 25px; border: 1px solid var(--line); border-radius: 7px; }.detail-summary h1 { margin: 0 0 15px; color: var(--blue); font-size: 28px; line-height: 1.3; }.detail-summary > p { color: #59677a; }.seller-line { display: flex; align-items: center; gap: 8px; margin: 12px 0; font-size: 13px; }.seller-line i { display: grid; place-items: center; width: 15px; height: 15px; color: #fff; background: var(--blue2); border-radius: 50%; font-size: 9px; font-style: normal; }
 .detail-proof { display: flex; flex-wrap: wrap; gap: 8px 15px; margin: 12px 0 15px; color: #667487; font-size: 11.5px; }
