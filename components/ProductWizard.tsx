@@ -3,7 +3,7 @@
 
 import { ChangeEvent, DragEvent, FormEvent, KeyboardEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { Check, ChevronLeft, ChevronRight, Download, Eye, GripVertical, ImagePlus, Star, Trash2, UploadCloud, X } from 'lucide-react';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { uploadProductFile } from '../lib/upload-product-file';
 import { ProductCard } from './ProductCard';
 import { ProductGallery, ImageViewer } from './ProductGallery';
@@ -24,6 +24,7 @@ export function ProductWizard(){
   return <ProductWizardForm key={editId||'new'} editId={editId}/>;
 }
 function ProductWizardForm({editId}:{editId:string|null}){
+  const router=useRouter();
   const [step,setStep]=useState(0),[data,setData]=useState(initial),[productId,setProductId]=useState<string|null>(editId),[uploads,setUploads]=useState<UploadItem[]>([]),[coverId,setCoverId]=useState<string|null>(null),[error,setError]=useState(''),[message,setMessage]=useState(''),[busy,setBusy]=useState(false),[keywordInput,setKeywordInput]=useState('');
   const [loadState,setLoadState]=useState<'loading'|'ready'|'error'>(editId?'loading':'ready');
   useEffect(()=>{if(!editId)return;fetch(`/api/marketplace/products?id=${encodeURIComponent(editId)}`).then(async r=>{if(!r.ok)throw new Error('Không tải được bản nháp.');return r.json()}).then((p:any)=>{if(!p.id)throw new Error('Không tìm thấy bản nháp.');const category=buildings.includes(p.category)?p.category:(buildings.includes(p.building_type)?p.building_type:'Công trình khác');setData({...initial,...p,category,buildingType:buildings.includes(p.building_type)?p.building_type:'Công trình khác',style:styles.includes(p.style)?p.style:'Khác',width:p.width||'',length:p.length||'',floors:p.floors||'',area:p.area||'',formats:String(p.formats||'').split(',').filter(Boolean),disciplines:p.disciplines||[],tools:p.tools||[],keywords:p.keywords||[],isFree:!!p.is_free,price:String(p.price||0),shortDescription:p.short_description||''});const assets=(p.assets||[]).map((a:any,i:number)=>({id:a.id,name:`Ảnh preview ${i+1}`,size:0,url:`/api/assets/${a.id}`,progress:100,kind:'preview' as const,type:a.type}));setUploads([...assets,...(p.files||[]).map((f:any)=>({id:f.id,name:f.name,size:f.size,extension:f.extension,progress:100,kind:'file' as const}))]);setCoverId(assets.find((a:UploadItem)=>a.type==='cover')?.id||assets[0]?.id||null);setLoadState('ready')}).catch(()=>{setLoadState('error');setError('Không tải được bản nháp. Vui lòng tải lại trang; nội dung cũ chưa bị thay đổi.')})},[editId]);
@@ -99,7 +100,7 @@ function ProductWizardForm({editId}:{editId:string|null}){
   async function makeCover(id:string){await persistOrder(previews,id)}
   function addKeyword(value=keywordInput){const key=value.trim().toLowerCase().replace(/^,+|,+$/g,'');if(key.length<2||data.keywords.includes(key)||data.keywords.length>=8)return;set('keywords',[...data.keywords,key]);setKeywordInput('')}
   function keywordKey(e:KeyboardEvent<HTMLInputElement>){if(e.key==='Enter'||e.key===','){e.preventDefault();addKeyword()}}
-  async function submit(){if(transferring||mutating||busy)return;for(let i=0;i<5;i++){const issue=validate(i);if(issue){setStep(i);setError(issue);return}}if(!productId||!await saveDraft())return;setBusy(true);setError('');try{const response=await fetch(`/api/marketplace/products/${productId}/submit`,{method:'POST'}),result:any=await response.json();if(!response.ok)throw new Error(result.error||'Không thể gửi duyệt.');window.location.assign('/dashboard/san-pham')}catch(error){setError(error instanceof Error?error.message:'Không thể gửi duyệt.')}finally{setBusy(false)}}
+  async function submit(){if(transferring||mutating||busy)return;for(let i=0;i<5;i++){const issue=validate(i);if(issue){setStep(i);setError(issue);return}}if(!productId||!await saveDraft())return;setBusy(true);setError('');try{const response=await fetch(`/api/marketplace/products/${productId}/submit`,{method:'POST'}),result:any=await response.json();if(!response.ok)throw new Error(result.error||'Không thể gửi duyệt.');router.push('/dashboard/san-pham')}catch(error){setError(error instanceof Error?error.message:'Không thể gửi duyệt.')}finally{setBusy(false)}}
 
   const areaSuggestion=data.width&&data.length?Math.round(Number(data.width)*Number(data.length)*100)/100:0;
   const stepHelp=['Nhập những thông tin cơ bản để người mua nhận biết hồ sơ.','Bổ sung thông số nếu có; các trường ở bước này đều có thể để trống.','Tải ảnh xem trước, chọn ảnh bìa và sắp xếp theo thứ tự mong muốn.','Tải ít nhất một file nguồn để bàn giao cho người mua.','Chọn hình thức miễn phí hoặc trả phí và thêm từ khóa nếu cần.','Kiểm tra cách hồ sơ hiển thị trước khi gửi quản trị viên duyệt.'];

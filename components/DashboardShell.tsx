@@ -1,7 +1,7 @@
 'use client';
-/* eslint-disable @next/next/no-html-link-for-pages */
 
 import { Download, FileText, Heart, Home, LayoutDashboard, Menu, PlusSquare, Settings, ShieldCheck, Store, UserRound, X } from 'lucide-react';
+import Link from 'next/link';
 import { ReactNode, useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 
@@ -30,9 +30,9 @@ function NavGroup({ label, items, pathname }: { label: string; items: readonly N
     <span>{label}</span>
     {items.map(([href, itemLabel, Icon]) => {
       const active = isActive(pathname, href);
-      return <a key={href} href={href} className={active ? 'active' : ''} aria-current={active ? 'page' : undefined}>
+      return <Link key={href} href={href} className={active ? 'active' : ''} aria-current={active ? 'page' : undefined}>
         <Icon size={18} strokeWidth={1.8} />{itemLabel}
-      </a>;
+      </Link>;
     })}
   </div>;
 }
@@ -67,14 +67,14 @@ export function DashboardShell({ children, name, admin = false, seller = true }:
     {open && <button type="button" className="dashboard-overlay" aria-label="Đóng menu" onClick={() => { setOpen(false); trigger.current?.focus(); }} />}
     <aside ref={sidebar} id="dashboard-navigation" className={`dashboard-sidebar${open ? ' open' : ''}`}>
       <button type="button" className="dashboard-close" aria-label="Đóng menu" onClick={() => { setOpen(false); trigger.current?.focus(); }}><X /></button>
-      <a className="dashboard-brand" href="/">NHÀ ĐẸP CHẤT<small>KHÔNG GIAN LÀM VIỆC</small></a>
+      <Link className="dashboard-brand" href="/">NHÀ ĐẸP CHẤT<small>KHÔNG GIAN LÀM VIỆC</small></Link>
       <nav aria-label="Điều hướng không gian làm việc">
         {seller && <NavGroup label="NGƯỜI BÁN" items={sellerLinks} pathname={pathname} />}
-        {!seller && <div className="dashboard-nav-group"><span>NGƯỜI BÁN</span><a href="/dang-ban"><Store size={18} strokeWidth={1.8} />Bắt đầu đăng bán</a></div>}
+        {!seller && <div className="dashboard-nav-group"><span>NGƯỜI BÁN</span><Link href="/dang-ban"><Store size={18} strokeWidth={1.8} />Bắt đầu đăng bán</Link></div>}
         <NavGroup label="TÀI KHOẢN" items={accountLinks} pathname={pathname} />
-        {admin && <div className="dashboard-nav-group"><span>QUẢN TRỊ</span><a className={pathname.startsWith('/admin') ? 'active admin-nav-link' : 'admin-nav-link'} href="/admin/san-pham" aria-current={pathname.startsWith('/admin') ? 'page' : undefined}><ShieldCheck size={18} strokeWidth={1.8} />Duyệt sản phẩm</a></div>}
+        {admin && <div className="dashboard-nav-group"><span>QUẢN TRỊ</span><Link className={pathname.startsWith('/admin') ? 'active admin-nav-link' : 'admin-nav-link'} href="/admin/san-pham" aria-current={pathname.startsWith('/admin') ? 'page' : undefined}><ShieldCheck size={18} strokeWidth={1.8} />Duyệt sản phẩm</Link></div>}
       </nav>
-      <div className="dashboard-user"><b>{name}</b><span>{roleLabel}</span><a href="/"><Home size={14} strokeWidth={1.8} />Về trang chủ</a></div>
+      <div className="dashboard-user"><b>{name}</b><span>{roleLabel}</span><Link href="/"><Home size={14} strokeWidth={1.8} />Về trang chủ</Link></div>
     </aside>
     <main className="dashboard-main">{children}</main>
   </div>;
