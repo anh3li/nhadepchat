@@ -5,6 +5,8 @@ declare namespace Cloudflare {
     BETTER_AUTH_SECRET?: string;
     BETTER_AUTH_URL?: string;
     ADMIN_EMAILS?: string;
+    GOOGLE_CLIENT_ID?: string;
+    GOOGLE_CLIENT_SECRET?: string;
     R2_ACCOUNT_ID?: string;
     R2_BUCKET_NAME?: string;
     R2_ACCESS_KEY_ID?: string;

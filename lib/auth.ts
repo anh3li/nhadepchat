@@ -1,5 +1,6 @@
 import { env } from 'cloudflare:workers';
 import { betterAuth } from 'better-auth';
+import { googleAuthEnabled } from './google-auth';
 
 const productionOrigin = env.BETTER_AUTH_URL || 'http://localhost:3000';
 
@@ -9,6 +10,20 @@ export const auth = betterAuth({
   baseURL: productionOrigin,
   trustedOrigins: [productionOrigin, 'http://localhost:3000'],
   emailAndPassword: { enabled: true, minPasswordLength: 12, maxPasswordLength: 128 },
+  socialProviders: googleAuthEnabled() ? {
+    google: {
+      clientId: env.GOOGLE_CLIENT_ID!,
+      clientSecret: env.GOOGLE_CLIENT_SECRET!,
+      prompt: 'select_account',
+    },
+  } : {},
+  account: {
+    accountLinking: {
+      enabled: true,
+      requireLocalEmailVerified: true,
+      allowDifferentEmails: false,
+    },
+  },
   user: {
     additionalFields: {
       role: { type: ['user', 'seller', 'admin'], required: false, defaultValue: 'user', input: false },
