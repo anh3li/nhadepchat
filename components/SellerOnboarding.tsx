@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { optimizeImageToWebp } from '../lib/image-optimization';
 
 type ApiResult = { error?: string };
 
@@ -17,6 +18,8 @@ export function SellerOnboarding({ defaultName }: { defaultName: string }) {
     const form = new FormData(event.currentTarget);
     const avatar = form.get('avatar');
     form.delete('avatar');
+    let avatarUpload:File|null=null;
+    if(avatar instanceof File&&avatar.size){try{avatarUpload=await optimizeImageToWebp(avatar,{maxDimension:640,maxBytes:512*1024,quality:.84})}catch(reason){setLoading(false);setError(reason instanceof Error?reason.message:'Không thể xử lý avatar.');return}}
     const entries = Object.fromEntries(form.entries());
     const body: Record<string, unknown> = {
       ...entries,
@@ -31,9 +34,9 @@ export function SellerOnboarding({ defaultName }: { defaultName: string }) {
       setError(data.error || 'Không thể tạo hồ sơ.');
       return;
     }
-    if (avatar instanceof File && avatar.size) {
+    if (avatarUpload) {
       const avatarForm = new FormData();
-      avatarForm.set('avatar', avatar);
+      avatarForm.set('avatar', avatarUpload);
       const avatarResponse = await fetch('/api/marketplace/avatar', { method: 'POST', body: avatarForm });
       if (!avatarResponse.ok) {
         const avatarData = await avatarResponse.json() as ApiResult;
@@ -48,7 +51,7 @@ export function SellerOnboarding({ defaultName }: { defaultName: string }) {
 
   return <form className="onboarding-form" onSubmit={submit}>
     <div className="form-grid">
-      <label className="wide">Avatar<input name="avatar" type="file" accept=".jpg,.jpeg,.png,.webp" /></label>
+      <label className="wide">Avatar<input name="avatar" type="file" accept=".jpg,.jpeg,.png,.webp" /><small>Tự động nén và chuyển sang WEBP.</small></label>
       <label>Tên hiển thị<input name="displayName" defaultValue={defaultName} required /></label>
       <label>Bạn là ai?<select name="sellerType" required><option value="architect">Kiến trúc sư</option><option value="engineer">Kỹ sư</option><option value="interior_designer">Thiết kế nội thất</option><option value="contractor">Nhà thầu</option><option value="student">Sinh viên</option><option value="other">Khác</option></select></label>
       <label>Chức danh<input name="professionalTitle" placeholder="KTS chủ trì, Kỹ sư kết cấu…" required /></label>

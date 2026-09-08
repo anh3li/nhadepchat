@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ArrowRight, Building, Building2, ChevronDown, Download, DraftingCompass, Droplets, Factory, FileText, Heart, Home, House, Landmark, Layers3, LayoutDashboard, LogIn, LogOut, Menu, PackageCheck, School, Search, Settings, Store, UserPlus, UserRound, X, Zap, type LucideIcon } from 'lucide-react';
 import { authClient } from '../lib/auth-client';
 import { HeaderCartLink } from './HeaderCartLink';
+import { SafeImage } from './SafeImage';
 
 type Viewer={user_id:string;display_name:string;avatar_key:string|null;role:'user'|'seller'|'admin';seller_id:string|null};
 const groups=[
@@ -30,7 +31,7 @@ export function MarketplaceHeader(){
       <Link href="/bo-suu-tap">Bộ sưu tập</Link>
       <div className="nav-group community"><button type="button" className={menu==='community'?'open':''} aria-expanded={menu==='community'} onClick={()=>setMenu(menu==='community'?null:'community')}>Cộng đồng<ChevronDown className="nav-chevron" size={15} strokeWidth={1.8}/></button>{menu==='community'&&<CommunityMenu/>}</div>
       <Link href="/dang-ban">Đăng bán</Link><HeaderCartLink/>
-      <div className="nav-group account-group"><button type="button" className={`account-trigger${menu==='account'?' open':''}`} aria-expanded={menu==='account'} onClick={()=>setMenu(menu==='account'?null:'account')}><span className="header-avatar">{viewer?.avatar_key?<img src={`/api/profile-avatar/${viewer.user_id}`} alt=""/>:initials}</span><span>{viewer?.display_name||'Tài khoản'}</span><ChevronDown className="nav-chevron" size={15} strokeWidth={1.8}/></button>{menu==='account'&&<AccountDropdown viewer={viewer} logout={logout}/>}</div>
+      <div className="nav-group account-group"><button type="button" className={`account-trigger${menu==='account'?' open':''}`} aria-expanded={menu==='account'} onClick={()=>setMenu(menu==='account'?null:'account')}><span className="header-avatar">{viewer?.avatar_key?<SafeImage src={`/api/profile-avatar/${viewer.user_id}?v=${encodeURIComponent(viewer.avatar_key)}`} alt=""/>:initials}</span><span>{viewer?.display_name||'Tài khoản'}</span><ChevronDown className="nav-chevron" size={15} strokeWidth={1.8}/></button>{menu==='account'&&<AccountDropdown viewer={viewer} logout={logout}/>}</div>
     </nav>
     <button type="button" className="menu-toggle" aria-expanded={mobile} onClick={()=>setMobile(!mobile)} aria-label={mobile?'Đóng menu':'Mở menu'}>{mobile?<X/>:<Menu/>}</button>
   </div></header>;

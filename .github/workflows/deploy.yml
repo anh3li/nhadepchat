@@ -45,7 +45,7 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npx tsc --noEmit
-      - run: node --experimental-strip-types --test scripts/auth-return-path.test.mjs scripts/upload-product-file.test.mjs
+      - run: node --experimental-strip-types --test scripts/auth-return-path.test.mjs scripts/upload-product-file.test.mjs scripts/image-optimization.test.mjs
       - run: npm run build
       - run: npx wrangler d1 migrations apply nhadepchat-db --remote --config wrangler.jsonc
       - run: npm run deploy

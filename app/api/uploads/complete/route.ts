@@ -5,7 +5,7 @@ import { isAllowedMime, jsonError, safeFilename } from '../../../../lib/marketpl
 
 const schema=z.object({id:z.string().uuid(),productId:z.string().uuid(),objectKey:z.string(),kind:z.enum(['preview','file']),originalName:z.string(),extension:z.string(),mime:z.string(),size:z.number().int().positive()});
 export async function POST(request:Request){const current=await apiSeller(request);if('error'in current)return current.error;const parsed=schema.safeParse(await request.json());if(!parsed.success)return jsonError('Metadata file không hợp lệ.',422);const d=parsed.data;
-  const allowed=d.kind==='preview'?['jpg','jpeg','png','webp']:['dwg','skp','rvt','pdf','xlsx','docx','zip','rar'];const max=d.kind==='preview'?10*1024*1024:250*1024*1024;
+  const allowed=d.kind==='preview'?['webp']:['dwg','skp','rvt','pdf','xlsx','docx','zip','rar'];const max=d.kind==='preview'?4*1024*1024:250*1024*1024;
   if(!allowed.includes(d.extension)||d.size>max||!isAllowedMime(d.extension,d.mime,d.kind==='preview'))return jsonError('Loại file hoặc kích thước không hợp lệ.',422);
   if(!d.objectKey.startsWith(`products/${d.productId}/${d.kind==='preview'?'preview':'files'}/`))return jsonError('Object key không hợp lệ.',403);
   const owned=await getD1().prepare("SELECT id FROM products WHERE id=? AND seller_id=? AND status IN ('draft','rejected')").bind(d.productId,current.seller.id).first();if(!owned)return jsonError('Không có quyền hoàn tất upload.',403);

@@ -5,9 +5,11 @@ import { ChangeEvent, DragEvent, FormEvent, KeyboardEvent, useEffect, useMemo, u
 import { Check, ChevronLeft, ChevronRight, Download, Eye, GripVertical, ImagePlus, Star, Trash2, UploadCloud, X } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { uploadProductFile } from '../lib/upload-product-file';
+import { optimizeImageToWebp } from '../lib/image-optimization';
 import { ProductCard } from './ProductCard';
 import { ProductGallery, ImageViewer } from './ProductGallery';
 import { RichTextEditor } from './RichTextEditor';
+import { SafeImage } from './SafeImage';
 
 const steps=['Thông tin','Thông số','Hình ảnh','File hồ sơ','Giá & SEO','Xem trước'];
 const buildings=['Nhà phố','Nhà cấp 4','Biệt thự','Nhà vườn','Nhà xưởng','Văn phòng','Trường học','Chung cư','Quy hoạch','Nội thất','Công trình khác'];
@@ -55,8 +57,10 @@ function ProductWizardForm({editId}:{editId:string|null}){
         const temp=`temp-${crypto.randomUUID()}`;
         setUploads(v=>[...v,{id:temp,name:file.name,size:file.size,progress:0,kind}]);
         try {
-          const result=await uploadProductFile(productId,file,kind,progress=>setUploads(v=>v.map(x=>x.id===temp?{...x,progress}:x)));
-          const extension=file.name.split('.').pop()?.toUpperCase()||'';
+          const uploadFile=kind==='preview'?await optimizeImageToWebp(file,{maxDimension:2400,maxBytes:4*1024*1024}):file;
+          setUploads(v=>v.map(x=>x.id===temp?{...x,name:uploadFile.name,size:uploadFile.size,progress:2}:x));
+          const result=await uploadProductFile(productId,uploadFile,kind,progress=>setUploads(v=>v.map(x=>x.id===temp?{...x,progress}:x)));
+          const extension=uploadFile.name.split('.').pop()?.toUpperCase()||'';
           setUploads(v=>v.map(x=>x.id===temp?{...x,id:result.id,url:result.url,extension,progress:100}:x));
           if(kind==='preview')setCoverId(current=>current||result.id);
           if(kind==='file'&&formats.includes(extension))setData(current=>({...current,formats:[...new Set([...current.formats,extension])]}));
@@ -132,10 +136,10 @@ function UploadStep({disabled,kind,items,coverId,onFiles,onDrop,onRemove,onReord
   const cover=ready.find(item=>item.id===coverId)||ready[0];
   function show(id:string){opener.current=document.activeElement as HTMLElement;setView(ready.findIndex(item=>item.id===id))}
   return <div className={kind==='preview'?'media-manager':'file-manager'} aria-busy={disabled}>
-    {kind==='preview'&&cover&&<section className="cover-preview"><img src={cover.url} alt="Ảnh bìa hiện tại"/><div><span>ẢNH BÌA HIỆN TẠI</span><b>{cover.name}</b><button className="outline-action" type="button" onClick={()=>show(cover.id)}><Eye size={16}/>Xem ảnh lớn</button><small>Chọn biểu tượng ngôi sao bên dưới để đổi ảnh bìa.</small></div></section>}
+    {kind==='preview'&&cover&&<section className="cover-preview"><SafeImage src={cover.url!} alt="Ảnh bìa hiện tại"/><div><span>ẢNH BÌA HIỆN TẠI</span><b>{cover.name}</b><button className="outline-action" type="button" onClick={()=>show(cover.id)}><Eye size={16}/>Xem ảnh lớn</button><small>Chọn biểu tượng ngôi sao bên dưới để đổi ảnh bìa.</small></div></section>}
     <div className="drop-zone" onDragOver={e=>e.preventDefault()} onDrop={e=>{if(disabled)e.preventDefault();else onDrop(e)}}>
       {kind==='preview'?<ImagePlus/>:<UploadCloud/>}<b>{kind==='preview'?'Kéo ảnh vào đây hoặc chọn ảnh':'Kéo file vào đây hoặc chọn file'}</b>
-      <span>{kind==='preview'?'Tối đa 20 ảnh JPG, PNG, WEBP · 10MB/ảnh':'DWG, SKP, RVT, PDF, XLSX, DOCX, ZIP, RAR · 250MB/file · File nguồn riêng tư'}</span>
+      <span>{kind==='preview'?'JPG, PNG, WEBP · tự động nén và chuyển sang WEBP':'DWG, SKP, RVT, PDF, XLSX, DOCX, ZIP, RAR · 250MB/file · File nguồn riêng tư'}</span>
       <input ref={input} hidden type="file" disabled={disabled} multiple accept={kind==='preview'?'.jpg,.jpeg,.png,.webp':'.dwg,.skp,.rvt,.pdf,.xlsx,.docx,.zip,.rar'} onChange={e=>{if(e.target.files)onFiles(e.target.files);e.target.value=''}}/>
       <button type="button" className="outline-action" disabled={disabled} onClick={()=>input.current?.click()}>{disabled?'Đang xử lý…':kind==='preview'?'Chọn ảnh':'Chọn file'}</button>
     </div>
@@ -145,7 +149,7 @@ function UploadStep({disabled,kind,items,coverId,onFiles,onDrop,onRemove,onReord
       return <article className={`${item.error?'upload-error':''}${coverId===item.id?' is-cover':''}`} key={item.id} draggable={kind==='preview'&&!locked}
         onDragStart={e=>e.dataTransfer.setData('text/plain',item.id)} onDragOver={e=>kind==='preview'&&e.preventDefault()}
         onDrop={e=>{if(kind==='preview'){e.preventDefault();if(!disabled)onReorder?.(e.dataTransfer.getData('text/plain'),item.id)}}}>
-        {kind==='preview'?<div className="media-thumb">{item.url&&<img src={item.url} alt={`Ảnh ${index+1}`}/>}<span className="media-index"><GripVertical size={14}/>{index+1}</span>{coverId===item.id&&<b className="cover-badge">ẢNH BÌA</b>}</div>:<><span className="file-order">{index+1}</span><span className="file-extension">{item.extension||item.name.split('.').pop()?.toUpperCase()}</span></>}
+        {kind==='preview'?<div className="media-thumb">{item.url&&<SafeImage src={item.url} alt={`Ảnh ${index+1}`}/>}<span className="media-index"><GripVertical size={14}/>{index+1}</span>{coverId===item.id&&<b className="cover-badge">ẢNH BÌA</b>}</div>:<><span className="file-order">{index+1}</span><span className="file-extension">{item.extension||item.name.split('.').pop()?.toUpperCase()}</span></>}
         <span className="upload-info"><b>{item.name}</b><small>{item.error?'Tải lên thất bại — chọn lại file để thử lại':pending?`Đang tải ${item.progress}%`:item.size?`${(item.size/1024/1024).toFixed(2)} MB · Đã tải lên`:'Đã tải lên'}</small>{pending&&!item.error&&<i role="progressbar" aria-label={`Tải ${item.name}`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={item.progress}><em style={{width:`${item.progress}%`}}/></i>}</span>
         <div className="upload-actions">
           {kind==='preview'&&<><button type="button" disabled={locked} onClick={()=>show(item.id)} aria-label={`Xem ảnh ${index+1}`}><Eye/></button><button type="button" disabled={locked} className="cover-action" onClick={()=>onCover?.(item.id)} aria-label={`Đặt ảnh ${index+1} làm bìa`} aria-pressed={coverId===item.id}><Star fill={coverId===item.id?'currentColor':'none'}/></button><button type="button" disabled={locked||index===0} onClick={()=>onReorder?.(item.id,items[index-1].id)} aria-label={`Chuyển ảnh ${index+1} về trước`}><ChevronLeft/></button><button type="button" disabled={locked||index===items.length-1} onClick={()=>onReorder?.(item.id,items[index+1].id)} aria-label={`Chuyển ảnh ${index+1} về sau`}><ChevronRight/></button></>}
