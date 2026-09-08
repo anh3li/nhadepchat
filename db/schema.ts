@@ -96,6 +96,27 @@ export const productViews = sqliteTable('product_views', {
   viewerKey: text('viewer_key').notNull(), viewedOn: integer('viewed_on').notNull(), createdAt: integer('created_at').notNull(),
 }, (table) => [uniqueIndex('product_views_daily_unique').on(table.productId, table.viewerKey, table.viewedOn), index('idx_product_views_product_created').on(table.productId, table.createdAt)]);
 
+export const metricSettings = sqliteTable('metric_settings', {
+  id: integer('id').primaryKey(),
+  homeUseReal: integer('home_use_real', { mode: 'boolean' }).notNull().default(true),
+  homeProductCount: integer('home_product_count').notNull().default(0),
+  homeFreeCount: integer('home_free_count').notNull().default(0),
+  homeSellerCount: integer('home_seller_count').notNull().default(0),
+  homeDownloadCount: integer('home_download_count').notNull().default(0),
+  productUseReal: integer('product_use_real', { mode: 'boolean' }).notNull().default(true),
+  ratingUseReal: integer('rating_use_real', { mode: 'boolean' }).notNull().default(true),
+  updatedAt: integer('updated_at').notNull(),
+});
+
+export const productMetricOverrides = sqliteTable('product_metric_overrides', {
+  productId: text('product_id').primaryKey().references(() => products.id, { onDelete: 'cascade' }),
+  viewCount: integer('view_count').notNull().default(0),
+  downloadCount: integer('download_count').notNull().default(0),
+  rating: real('rating').notNull().default(0),
+  reviewCount: integer('review_count').notNull().default(0),
+  updatedAt: integer('updated_at').notNull(),
+});
+
 export const productReviews = sqliteTable('product_reviews', {
   id: text('id').primaryKey(), productId: text('product_id').notNull().references(() => products.id, { onDelete: 'cascade' }),
   userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }), rating: integer('rating').notNull(),

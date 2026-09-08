@@ -2,7 +2,7 @@
 
 import { FormEvent, useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { authClient } from '../lib/auth-client';
 import { authReturnPath } from '../lib/auth-return-path';
 import Link from 'next/link';
@@ -17,7 +17,7 @@ function authError(message?: string) {
 }
 
 export function AuthForm({ mode, googleEnabled = false }: { mode: 'login' | 'register'; googleEnabled?: boolean }) {
-  const router = useRouter(), params = useSearchParams();
+  const params = useSearchParams();
   const [error, setError] = useState(''), [loading, setLoading] = useState(false), [visible, setVisible] = useState(false);
   const register = mode === 'register';
   async function googleLogin() {
@@ -43,7 +43,7 @@ export function AuthForm({ mode, googleEnabled = false }: { mode: 'login' | 'reg
       const result = register ? await authClient.signUp.email({ email, password, name }) : await authClient.signIn.email({ email, password });
       if (result.error) { setError(authError(result.error.message)); return; }
       const safeTarget = authReturnPath(params.get('returnTo'));
-      router.push(safeTarget); router.refresh();
+      window.location.assign(safeTarget);
     } catch { setError('Không kết nối được máy chủ. Vui lòng kiểm tra mạng và thử lại.'); }
     finally { setLoading(false); }
   }

@@ -29,6 +29,20 @@
       "when": 1788780000000,
       "tag": "0003_persistent_cart",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1788872411462,
+      "tag": "0004_needy_angel",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1788873721732,
+      "tag": "0005_grey_iron_patriot",
+      "breakpoints": true
     }
   ]
 }

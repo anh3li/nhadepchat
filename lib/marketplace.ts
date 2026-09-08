@@ -79,9 +79,21 @@ export function productSelect() {
     (SELECT object_key FROM product_assets pa WHERE pa.product_id=p.id ORDER BY CASE WHEN pa.type='cover' THEN 0 ELSE 1 END, pa.sort_order LIMIT 1) cover_key,
     (SELECT id FROM product_assets pa WHERE pa.product_id=p.id ORDER BY CASE WHEN pa.type='cover' THEN 0 ELSE 1 END, pa.sort_order LIMIT 1) cover_id,
     (SELECT GROUP_CONCAT(format, ' · ') FROM product_formats pf WHERE pf.product_id=p.id) formats,
-    (SELECT COUNT(*) FROM downloads d WHERE d.product_id=p.id) download_count,
-    (SELECT COUNT(*) FROM product_views pv WHERE pv.product_id=p.id) view_count,
-    (SELECT ROUND(AVG(pr.rating),1) FROM product_reviews pr WHERE pr.product_id=p.id) rating,
-    (SELECT COUNT(*) FROM product_reviews pr WHERE pr.product_id=p.id) review_count
+    CASE WHEN COALESCE((SELECT product_use_real FROM metric_settings WHERE id=1),1)=1
+      THEN (SELECT COUNT(*) FROM downloads d WHERE d.product_id=p.id)
+      ELSE COALESCE((SELECT pmo.download_count FROM product_metric_overrides pmo WHERE pmo.product_id=p.id),0)
+    END download_count,
+    CASE WHEN COALESCE((SELECT product_use_real FROM metric_settings WHERE id=1),1)=1
+      THEN (SELECT COUNT(*) FROM product_views pv WHERE pv.product_id=p.id)
+      ELSE COALESCE((SELECT pmo.view_count FROM product_metric_overrides pmo WHERE pmo.product_id=p.id),0)
+    END view_count,
+    CASE WHEN COALESCE((SELECT rating_use_real FROM metric_settings WHERE id=1),1)=1
+      THEN (SELECT ROUND(AVG(pr.rating),1) FROM product_reviews pr WHERE pr.product_id=p.id)
+      ELSE COALESCE((SELECT pmo.rating FROM product_metric_overrides pmo WHERE pmo.product_id=p.id),0)
+    END rating,
+    CASE WHEN COALESCE((SELECT rating_use_real FROM metric_settings WHERE id=1),1)=1
+      THEN (SELECT COUNT(*) FROM product_reviews pr WHERE pr.product_id=p.id)
+      ELSE COALESCE((SELECT pmo.review_count FROM product_metric_overrides pmo WHERE pmo.product_id=p.id),0)
+    END review_count
     FROM products p JOIN seller_profiles sp ON sp.id=p.seller_id JOIN user_profiles up ON up.user_id=sp.user_id LEFT JOIN user u ON u.id=up.user_id`;
 }

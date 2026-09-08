@@ -1,9 +1,10 @@
 'use client';
 
-import { Download, FileText, Heart, Home, LayoutDashboard, Menu, PlusSquare, Settings, ShieldCheck, Store, UserRound, X } from 'lucide-react';
+import { Download, FileText, Heart, Home, LayoutDashboard, Menu, PlusSquare, Settings, ShieldCheck, SlidersHorizontal, Store, UserRound, X } from 'lucide-react';
 import Link from 'next/link';
 import { ReactNode, useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
+import { BrandLogo } from './BrandLogo';
 
 type NavItem = readonly [href: string, label: string, icon: typeof UserRound];
 
@@ -67,12 +68,16 @@ export function DashboardShell({ children, name, admin = false, seller = true }:
     {open && <button type="button" className="dashboard-overlay" aria-label="Đóng menu" onClick={() => { setOpen(false); trigger.current?.focus(); }} />}
     <aside ref={sidebar} id="dashboard-navigation" className={`dashboard-sidebar${open ? ' open' : ''}`}>
       <button type="button" className="dashboard-close" aria-label="Đóng menu" onClick={() => { setOpen(false); trigger.current?.focus(); }}><X /></button>
-      <Link className="dashboard-brand" href="/">NHÀ ĐẸP CHẤT<small>KHÔNG GIAN LÀM VIỆC</small></Link>
+      <BrandLogo className="dashboard-brand" subtitle="KHÔNG GIAN LÀM VIỆC" />
       <nav aria-label="Điều hướng không gian làm việc">
         {seller && <NavGroup label="NGƯỜI BÁN" items={sellerLinks} pathname={pathname} />}
         {!seller && <div className="dashboard-nav-group"><span>NGƯỜI BÁN</span><Link href="/dang-ban"><Store size={18} strokeWidth={1.8} />Bắt đầu đăng bán</Link></div>}
         <NavGroup label="TÀI KHOẢN" items={accountLinks} pathname={pathname} />
-        {admin && <div className="dashboard-nav-group"><span>QUẢN TRỊ</span><Link className={pathname.startsWith('/admin') ? 'active admin-nav-link' : 'admin-nav-link'} href="/admin/san-pham" aria-current={pathname.startsWith('/admin') ? 'page' : undefined}><ShieldCheck size={18} strokeWidth={1.8} />Duyệt sản phẩm</Link></div>}
+        {admin && <div className="dashboard-nav-group">
+          <span>QUẢN TRỊ</span>
+          <Link className={isActive(pathname, '/admin/san-pham') ? 'active admin-nav-link' : 'admin-nav-link'} href="/admin/san-pham" aria-current={isActive(pathname, '/admin/san-pham') ? 'page' : undefined}><ShieldCheck size={18} strokeWidth={1.8} />Duyệt sản phẩm</Link>
+          <Link className={isActive(pathname, '/admin/cai-dat') ? 'active admin-nav-link' : 'admin-nav-link'} href="/admin/cai-dat" aria-current={isActive(pathname, '/admin/cai-dat') ? 'page' : undefined}><SlidersHorizontal size={18} strokeWidth={1.8} />Cài đặt số liệu</Link>
+        </div>}
       </nav>
       <div className="dashboard-user"><b>{name}</b><span>{roleLabel}</span><Link href="/"><Home size={14} strokeWidth={1.8} />Về trang chủ</Link></div>
     </aside>
