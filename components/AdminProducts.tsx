@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { CheckCircle2, Eye, XCircle } from 'lucide-react';
 import { SafeImage } from './SafeImage';
 
 type Product = {
@@ -79,7 +80,7 @@ export function AdminProducts() {
           <small>{product.file_summary || 'Chưa có file'} · {product.submitted_at ? `Gửi ${new Date(product.submitted_at).toLocaleString('vi-VN')}` : 'Chưa gửi duyệt'}</small>
           {rejectId === product.id && <label className="reject-reason">Lý do từ chối<textarea value={reason} onChange={(event) => setReason(event.target.value)} minLength={5} /></label>}
         </div>
-        <footer>{product.cover_id&&<a className="outline-action" href={`/api/assets/${product.cover_id}`} target="_blank" rel="noreferrer">Xem ảnh</a>}{status === 'pending'&&(rejectId === product.id ? <><button className="reject" onClick={() => setRejectId(null)}>HỦY</button><button className="reject confirm" onClick={() => moderate(product.id, 'reject')}>XÁC NHẬN TỪ CHỐI</button></> : <><button className="approve" onClick={() => moderate(product.id, 'approve')}>DUYỆT BÀI</button><button className="reject" onClick={() => setRejectId(product.id)}>TỪ CHỐI</button></>)}</footer>
+        <div className="admin-actions">{product.cover_id&&<a className="outline-action" href={`/api/assets/${product.cover_id}`} target="_blank" rel="noreferrer"><Eye size={15}/>Xem ảnh</a>}{status === 'pending'&&(rejectId === product.id ? <><button type="button" className="reject" onClick={() => setRejectId(null)}>Hủy</button><button type="button" className="reject confirm" onClick={() => moderate(product.id, 'reject')}><XCircle size={15}/>Xác nhận từ chối</button></> : <><button type="button" className="approve" onClick={() => moderate(product.id, 'approve')}><CheckCircle2 size={15}/>Duyệt bài</button><button type="button" className="reject" onClick={() => setRejectId(product.id)}><XCircle size={15}/>Từ chối</button></>)}</div>
       </article>) : <div className="empty-state"><h2>Không có sản phẩm</h2><p>Danh sách này hiện đang trống.</p></div>}</section>
   </>;
 }
