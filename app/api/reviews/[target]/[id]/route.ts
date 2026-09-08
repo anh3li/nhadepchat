@@ -32,13 +32,29 @@ async function payload(target: Target, id: string, request: Request, ownerId: st
   const db = getD1();
   const { table, column } = config(target);
   const session = await apiSession(request);
-  const [summary, reviews, eligibility, own] = await Promise.all([
+  const displayQuery = target === 'product'
+    ? db.prepare(`SELECT COALESCE((SELECT rating_use_real FROM metric_settings WHERE id=1),1) use_real,
+        COALESCE((SELECT rating FROM product_metric_overrides WHERE product_id=?),0) manual_rating,
+        COALESCE((SELECT review_count FROM product_metric_overrides WHERE product_id=?),0) manual_review_count`).bind(id, id)
+    : db.prepare(`SELECT COALESCE((SELECT seller_rating_use_real FROM metric_settings WHERE id=1),1) use_real,
+        COALESCE((SELECT rating FROM seller_metric_overrides WHERE seller_id=?),0) manual_rating,
+        COALESCE((SELECT review_count FROM seller_metric_overrides WHERE seller_id=?),0) manual_review_count`).bind(id, id);
+  const [summary, reviews, eligibility, own, display] = await Promise.all([
     db.prepare(`SELECT ROUND(AVG(rating),1) average,COUNT(*) count FROM ${table} WHERE ${column}=?`).bind(id).first<{ average: number | null; count: number }>(),
     db.prepare(`SELECT r.rating,r.comment,r.updated_at,up.display_name,up.avatar_key,up.user_id,u.image account_image FROM ${table} r JOIN user_profiles up ON up.user_id=r.user_id LEFT JOIN user u ON u.id=up.user_id WHERE r.${column}=? ORDER BY r.updated_at DESC LIMIT 30`).bind(id).all(),
     session ? canReview(target, id, session.user.id, ownerId) : Promise.resolve({ eligible: false, reason: 'Đăng nhập để đánh giá.' }),
     session ? db.prepare(`SELECT rating,comment FROM ${table} WHERE ${column}=? AND user_id=?`).bind(id, session.user.id).first() : Promise.resolve(null),
+    displayQuery.first<{ use_real: number; manual_rating: number; manual_review_count: number }>(),
   ]);
-  return { average: Number(summary?.average || 0), count: Number(summary?.count || 0), reviews: reviews.results, signedIn: Boolean(session), ...eligibility, own };
+  const useReal = Number(display?.use_real ?? 1) === 1;
+  return {
+    average: useReal ? Number(summary?.average || 0) : Number(display?.manual_rating || 0),
+    count: useReal ? Number(summary?.count || 0) : Number(display?.manual_review_count || 0),
+    reviews: reviews.results,
+    signedIn: Boolean(session),
+    ...eligibility,
+    own,
+  };
 }
 
 export async function GET(request: Request, { params }: { params: Promise<{ target: string; id: string }> }) {

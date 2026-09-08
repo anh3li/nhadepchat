@@ -105,6 +105,7 @@ export const metricSettings = sqliteTable('metric_settings', {
   homeDownloadCount: integer('home_download_count').notNull().default(0),
   productUseReal: integer('product_use_real', { mode: 'boolean' }).notNull().default(true),
   ratingUseReal: integer('rating_use_real', { mode: 'boolean' }).notNull().default(true),
+  sellerRatingUseReal: integer('seller_rating_use_real', { mode: 'boolean' }).notNull().default(true),
   updatedAt: integer('updated_at').notNull(),
 });
 
@@ -112,6 +113,13 @@ export const productMetricOverrides = sqliteTable('product_metric_overrides', {
   productId: text('product_id').primaryKey().references(() => products.id, { onDelete: 'cascade' }),
   viewCount: integer('view_count').notNull().default(0),
   downloadCount: integer('download_count').notNull().default(0),
+  rating: real('rating').notNull().default(0),
+  reviewCount: integer('review_count').notNull().default(0),
+  updatedAt: integer('updated_at').notNull(),
+});
+
+export const sellerMetricOverrides = sqliteTable('seller_metric_overrides', {
+  sellerId: text('seller_id').primaryKey().references(() => sellerProfiles.id, { onDelete: 'cascade' }),
   rating: real('rating').notNull().default(0),
   reviewCount: integer('review_count').notNull().default(0),
   updatedAt: integer('updated_at').notNull(),

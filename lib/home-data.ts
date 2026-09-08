@@ -13,7 +13,18 @@ export async function getHomeData() {
   const db = getD1();
   const [products, architects, popular, platformStats, metricSettings, collectionRows] = await Promise.all([
     db.prepare(`${productSelect()} WHERE p.status='approved' ORDER BY p.approved_at DESC LIMIT 10`).all<Record<string, unknown>>(),
-    db.prepare(`SELECT up.user_id,up.slug,up.display_name,up.avatar_key,u.image account_image,sp.id,sp.professional_title,sp.verification_status,COUNT(DISTINCT p.id) file_count,COUNT(DISTINCT d.id) download_count,(SELECT ROUND(AVG(sr.rating),1) FROM seller_reviews sr WHERE sr.seller_id=sp.id) rating,(SELECT COUNT(*) FROM seller_reviews sr WHERE sr.seller_id=sp.id) review_count FROM seller_profiles sp JOIN user_profiles up ON up.user_id=sp.user_id LEFT JOIN user u ON u.id=up.user_id LEFT JOIN products p ON p.seller_id=sp.id AND p.status='approved' LEFT JOIN downloads d ON d.product_id=p.id GROUP BY sp.id ORDER BY rating DESC,file_count DESC,download_count DESC LIMIT 4`).all<Record<string, unknown>>(),
+    db.prepare(`SELECT up.user_id,up.slug,up.display_name,up.avatar_key,u.image account_image,sp.id,sp.professional_title,sp.verification_status,COUNT(DISTINCT p.id) file_count,COUNT(DISTINCT d.id) download_count,
+      CASE WHEN COALESCE((SELECT seller_rating_use_real FROM metric_settings WHERE id=1),1)=1
+        THEN (SELECT ROUND(AVG(sr.rating),1) FROM seller_reviews sr WHERE sr.seller_id=sp.id)
+        ELSE COALESCE((SELECT smo.rating FROM seller_metric_overrides smo WHERE smo.seller_id=sp.id),0)
+      END rating,
+      CASE WHEN COALESCE((SELECT seller_rating_use_real FROM metric_settings WHERE id=1),1)=1
+        THEN (SELECT COUNT(*) FROM seller_reviews sr WHERE sr.seller_id=sp.id)
+        ELSE COALESCE((SELECT smo.review_count FROM seller_metric_overrides smo WHERE smo.seller_id=sp.id),0)
+      END review_count
+      FROM seller_profiles sp JOIN user_profiles up ON up.user_id=sp.user_id LEFT JOIN user u ON u.id=up.user_id
+      LEFT JOIN products p ON p.seller_id=sp.id AND p.status='approved' LEFT JOIN downloads d ON d.product_id=p.id
+      GROUP BY sp.id ORDER BY rating DESC,file_count DESC,download_count DESC LIMIT 4`).all<Record<string, unknown>>(),
     db.prepare(`${productSelect()} WHERE p.status='approved' ORDER BY download_count DESC,p.approved_at DESC LIMIT 5`).all<Record<string, unknown>>(),
     db.prepare(`SELECT (SELECT COUNT(*) FROM products WHERE status='approved') product_count,(SELECT COUNT(*) FROM products WHERE status='approved' AND is_free=1) free_count,(SELECT COUNT(*) FROM seller_profiles) seller_count,(SELECT COUNT(*) FROM downloads) download_count`).first<Record<string, number>>(),
     db.prepare('SELECT home_use_real,home_product_count,home_free_count,home_seller_count,home_download_count FROM metric_settings WHERE id=1').first<Record<string, number>>(),

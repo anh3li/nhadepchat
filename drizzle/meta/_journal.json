@@ -43,6 +43,13 @@
       "when": 1788873721732,
       "tag": "0005_grey_iron_patriot",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1788911543070,
+      "tag": "0006_seller-rating-overrides",
+      "breakpoints": true
     }
   ]
 }
