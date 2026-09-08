@@ -3,7 +3,7 @@
 'use client';
 
 import { ChangeEvent, FormEvent, useRef, useState } from 'react';
-import { Camera, LogOut, ShieldCheck } from 'lucide-react';
+import { Camera, LockKeyhole, LogOut, Mail, ShieldCheck } from 'lucide-react';
 import { authClient } from '../lib/auth-client';
 import { useRouter } from 'next/navigation';
 import { optimizeImageToWebp } from '../lib/image-optimization';
@@ -20,7 +20,7 @@ export function AccountPanel({name,email,role,seller=false,avatarUrl}:Props){
   async function logout(){await authClient.signOut();router.push('/');router.refresh()}
   return <section className="account-card content-card">
     <div className="account-intro"><div className="account-avatar">{preview?<SafeImage src={preview} alt="Ảnh đại diện"/>:<span>{initials}</span>}<button type="button" onClick={()=>input.current?.click()} aria-label="Chọn ảnh đại diện" title="Chọn ảnh đại diện"><Camera size={17}/></button></div><div><h2>Thông tin cá nhân</h2><p>Cập nhật tên và ảnh hiển thị trên hồ sơ KTS/người bán.</p><input ref={input} hidden type="file" accept=".jpg,.jpeg,.png,.webp" onChange={chooseAvatar}/><button type="button" className="avatar-change" disabled={busy} onClick={()=>input.current?.click()}>{busy?'Đang tối ưu ảnh…':'Đổi ảnh đại diện'}</button><small>Ảnh tự động nén và chuyển sang WEBP · ảnh gốc tối đa 20MB</small></div></div>
-    <form className="account-form" onSubmit={update}><label>Tên hiển thị<input name="name" defaultValue={name} required minLength={2} maxLength={80}/></label><label>Email tài khoản<input value={email} disabled/><small>Email đăng nhập không thể đổi tại đây.</small></label>{error&&<p className="form-error" role="alert">{error}</p>}{message&&<p className="form-success" role="status">{message}</p>}<button className="form-submit" disabled={busy}>{busy?'Đang lưu…':'Lưu thay đổi'}</button></form>
+    <form className="account-form" onSubmit={update}><div className="account-form-fields"><label>Tên hiển thị<input name="name" defaultValue={name} required minLength={2} maxLength={80}/><small>Tên này xuất hiện trên hồ sơ và các bản vẽ bạn chia sẻ.</small></label><div className="account-email-info"><span>Email đăng nhập</span><div><Mail size={17}/><strong>{email}</strong><em><LockKeyhole size={13}/>Đã khóa</em></div><small>Email được bảo vệ và không thể thay đổi tại trang hồ sơ.</small></div></div>{error&&<p className="form-error" role="alert">{error}</p>}{message&&<p className="form-success" role="status">{message}</p>}<button className="form-submit" disabled={busy}>{busy?'Đang lưu…':'Lưu thay đổi'}</button></form>
     <div className="account-actions"><div><span className="role-badge"><ShieldCheck size={16}/>{role==='admin'?'Quản trị viên':seller?'Người bán':'Thành viên'}</span><p>Các mục hồ sơ, bản vẽ đã lưu, bảo mật và khu vực bán hàng được quản lý thống nhất trong menu bên trái.</p></div></div>
     <div className="account-danger"><div><b>Đăng xuất khỏi tài khoản</b><span>Bạn sẽ cần đăng nhập lại để tiếp tục quản lý hồ sơ.</span></div><button type="button" onClick={logout}><LogOut size={17}/>Đăng xuất</button></div>
   </section>;

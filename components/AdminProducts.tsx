@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { CheckCircle2, Eye, XCircle } from 'lucide-react';
-import { SafeImage } from './SafeImage';
 
 type Product = {
   id: string;
@@ -74,7 +73,7 @@ export function AdminProducts() {
     {error && <p className="form-error">{error}</p>}
     <section className="content-card admin-list">{loading ? <p>Đang tải…</p> : rows.length ? rows.map((product) =>
       <article key={product.id}>
-        {product.cover_id ? <SafeImage className="admin-media" src={`/api/assets/${product.cover_id}`} alt={product.title} /> : <div className="image-placeholder" />}
+        {product.cover_id ? <div className="admin-media" role="img" aria-label={product.title} style={{backgroundImage:`url("/api/assets/${product.cover_id}")`}} /> : <div className="image-placeholder" />}
         <div><h2>{product.title}</h2><p><Link href={`/kts/${product.seller_slug}`}>{product.seller_name}</Link> · {product.category} · {product.building_type}</p>{product.short_description&&<p>{product.short_description}</p>}{product.description&&<div className="admin-description" dangerouslySetInnerHTML={{__html:product.description}}/>}
           <small>{product.width || '—'} × {product.length || '—'}m · {product.floors || '—'} tầng · {product.formats || '—'} · {Number(product.price).toLocaleString('vi-VN')}đ</small>
           <small>{product.file_summary || 'Chưa có file'} · {product.submitted_at ? `Gửi ${new Date(product.submitted_at).toLocaleString('vi-VN')}` : 'Chưa gửi duyệt'}</small>
