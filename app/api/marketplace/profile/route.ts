@@ -14,7 +14,7 @@ const schema = z.object({
 export async function GET(request: Request) {
   const current = await apiUser(request); if ('error' in current) return current.error;
   const row = await getD1().prepare('SELECT up.*, sp.id seller_id, sp.seller_type, sp.professional_title, sp.experience_years, sp.company, sp.website, sp.verification_status FROM user_profiles up LEFT JOIN seller_profiles sp ON sp.user_id=up.user_id WHERE up.user_id=?').bind(current.session.user.id).first();
-  return Response.json(row);
+  return Response.json(row ? { ...row, account_image: current.session.user.image || null } : row);
 }
 
 export async function POST(request: Request) {

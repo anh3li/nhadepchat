@@ -34,7 +34,7 @@ async function payload(target: Target, id: string, request: Request, ownerId: st
   const session = await apiSession(request);
   const [summary, reviews, eligibility, own] = await Promise.all([
     db.prepare(`SELECT ROUND(AVG(rating),1) average,COUNT(*) count FROM ${table} WHERE ${column}=?`).bind(id).first<{ average: number | null; count: number }>(),
-    db.prepare(`SELECT r.rating,r.comment,r.updated_at,up.display_name,up.avatar_key,up.user_id FROM ${table} r JOIN user_profiles up ON up.user_id=r.user_id WHERE r.${column}=? ORDER BY r.updated_at DESC LIMIT 30`).bind(id).all(),
+    db.prepare(`SELECT r.rating,r.comment,r.updated_at,up.display_name,up.avatar_key,up.user_id,u.image account_image FROM ${table} r JOIN user_profiles up ON up.user_id=r.user_id LEFT JOIN user u ON u.id=up.user_id WHERE r.${column}=? ORDER BY r.updated_at DESC LIMIT 30`).bind(id).all(),
     session ? canReview(target, id, session.user.id, ownerId) : Promise.resolve({ eligible: false, reason: 'Đăng nhập để đánh giá.' }),
     session ? db.prepare(`SELECT rating,comment FROM ${table} WHERE ${column}=? AND user_id=?`).bind(id, session.user.id).first() : Promise.resolve(null),
   ]);

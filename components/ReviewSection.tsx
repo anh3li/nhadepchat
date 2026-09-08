@@ -3,8 +3,9 @@
 import Link from 'next/link';
 import { FormEvent, useEffect, useState } from 'react';
 import { Star } from 'lucide-react';
+import { SafeImage } from './SafeImage';
 
-type Review = { rating: number; comment: string; updated_at: number; display_name: string; avatar_key: string | null; user_id: string };
+type Review = { rating: number; comment: string; updated_at: number; display_name: string; avatar_key: string | null; account_image: string | null; user_id: string };
 type ReviewData = { average: number; count: number; reviews: Review[]; signedIn: boolean; eligible: boolean; reason: string; own?: { rating: number; comment: string } | null };
 
 function Stars({ value, label }: { value: number; label?: string }) {
@@ -50,6 +51,6 @@ export function ReviewSection({ target, id, title, returnTo, initialAverage = 0,
       {error && <p className="form-error" role="alert">{error}</p>}
       <button className="button button-primary" disabled={!rating || busy}>{busy ? 'Đang gửi…' : data.own ? 'Cập nhật đánh giá' : 'Gửi đánh giá'}</button>
     </form> : <div className="review-eligibility">{!data.signedIn && data.reason ? <><span>{data.reason}</span><Link href={`/dang-nhap?returnTo=${encodeURIComponent(returnTo)}`}>Đăng nhập</Link></> : <span>{data.reason || 'Đánh giá được mở cho người đã tải hồ sơ.'}</span>}</div>}
-    {data.reviews.length > 0 && <div className="review-list">{data.reviews.map((review, index) => <article key={`${review.user_id}-${index}`}><span className="review-avatar">{review.display_name.split(' ').filter(Boolean).slice(-2).map(part => part[0]).join('').toUpperCase()}</span><div><header><b>{review.display_name}</b><Stars value={review.rating} label={`${review.rating} sao`} /><time>{new Date(review.updated_at).toLocaleDateString('vi-VN')}</time></header>{review.comment && <p>{review.comment}</p>}</div></article>)}</div>}
+    {data.reviews.length > 0 && <div className="review-list">{data.reviews.map((review, index) => {const avatar=review.avatar_key?`/api/profile-avatar/${review.user_id}?v=${encodeURIComponent(review.avatar_key)}`:review.account_image||'';return <article key={`${review.user_id}-${index}`}><span className="review-avatar">{avatar?<SafeImage src={avatar} alt=""/>:review.display_name.split(' ').filter(Boolean).slice(-2).map(part => part[0]).join('').toUpperCase()}</span><div><header><b>{review.display_name}</b><Stars value={review.rating} label={`${review.rating} sao`} /><time>{new Date(review.updated_at).toLocaleDateString('vi-VN')}</time></header>{review.comment && <p>{review.comment}</p>}</div></article>})}</div>}
   </section>;
 }

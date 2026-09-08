@@ -74,7 +74,7 @@ export function parseKeywords(value: unknown) {
 }
 
 export function productSelect() {
-  return `SELECT p.*, up.slug seller_slug, up.display_name seller_name, up.avatar_key seller_avatar,
+  return `SELECT p.*, up.slug seller_slug, up.display_name seller_name, up.avatar_key seller_avatar, u.image seller_account_image,
     sp.professional_title, sp.verification_status,
     (SELECT object_key FROM product_assets pa WHERE pa.product_id=p.id ORDER BY CASE WHEN pa.type='cover' THEN 0 ELSE 1 END, pa.sort_order LIMIT 1) cover_key,
     (SELECT id FROM product_assets pa WHERE pa.product_id=p.id ORDER BY CASE WHEN pa.type='cover' THEN 0 ELSE 1 END, pa.sort_order LIMIT 1) cover_id,
@@ -83,5 +83,5 @@ export function productSelect() {
     (SELECT COUNT(*) FROM product_views pv WHERE pv.product_id=p.id) view_count,
     (SELECT ROUND(AVG(pr.rating),1) FROM product_reviews pr WHERE pr.product_id=p.id) rating,
     (SELECT COUNT(*) FROM product_reviews pr WHERE pr.product_id=p.id) review_count
-    FROM products p JOIN seller_profiles sp ON sp.id=p.seller_id JOIN user_profiles up ON up.user_id=sp.user_id`;
+    FROM products p JOIN seller_profiles sp ON sp.id=p.seller_id JOIN user_profiles up ON up.user_id=sp.user_id LEFT JOIN user u ON u.id=up.user_id`;
 }

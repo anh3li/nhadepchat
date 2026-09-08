@@ -7,7 +7,7 @@ import { authClient } from '../lib/auth-client';
 import { HeaderCartLink } from './HeaderCartLink';
 import { SafeImage } from './SafeImage';
 
-type Viewer={user_id:string;display_name:string;avatar_key:string|null;role:'user'|'seller'|'admin';seller_id:string|null};
+type Viewer={user_id:string;display_name:string;avatar_key:string|null;account_image:string|null;role:'user'|'seller'|'admin';seller_id:string|null};
 const groups=[
   {title:'Theo công trình',items:['Nhà phố','Nhà cấp 4','Biệt thự','Nhà vườn','Nhà xưởng','Văn phòng','Trường học','Chung cư']},
   {title:'Theo hồ sơ',items:['Kiến trúc','Kết cấu','Điện','Cấp thoát nước','MEP','Nội thất','Quy hoạch','Biện pháp thi công']},
@@ -23,6 +23,7 @@ export function MarketplaceHeader(){
   function search(event:FormEvent<HTMLFormElement>){event.preventDefault();const q=String(new FormData(event.currentTarget).get('q')||'').trim();if(q)router.push(`/tim-kiem?q=${encodeURIComponent(q)}`)}
   async function logout(){await authClient.signOut();setViewer(null);setMenu(null);router.push('/');router.refresh()}
   const initials=viewer?.display_name?viewer.display_name.split(' ').filter(Boolean).slice(-2).map(x=>x[0]).join('').toUpperCase():'TK';
+  const avatarSource=viewer?.avatar_key?`/api/profile-avatar/${viewer.user_id}?v=${encodeURIComponent(viewer.avatar_key)}`:viewer?.account_image||'';
   return <header className="site-header" ref={root}><div className="shell header-inner">
     <Link className="logo" href="/" aria-label="Nhà Đẹp Chất"><span className="logo-mark"><i/></span><span><b>NHÀ ĐẸP CHẤT</b><small>MẪU NHÀ · BẢN VẼ · KTS</small></span></Link>
     <form className="search" role="search" onSubmit={search}><input type="search" name="q" aria-label="Tìm kiếm bản vẽ" placeholder="Tìm nhà 5x20, biệt thự 2 tầng, file CAD..."/><button type="submit" aria-label="Tìm kiếm"><Search aria-hidden size={20} strokeWidth={1.8}/></button></form>
@@ -31,7 +32,7 @@ export function MarketplaceHeader(){
       <Link href="/bo-suu-tap">Bộ sưu tập</Link>
       <div className="nav-group community"><button type="button" className={menu==='community'?'open':''} aria-expanded={menu==='community'} onClick={()=>setMenu(menu==='community'?null:'community')}>Cộng đồng<ChevronDown className="nav-chevron" size={15} strokeWidth={1.8}/></button>{menu==='community'&&<CommunityMenu/>}</div>
       <Link href="/dang-ban">Đăng bán</Link><HeaderCartLink/>
-      <div className="nav-group account-group"><button type="button" className={`account-trigger${menu==='account'?' open':''}`} aria-expanded={menu==='account'} onClick={()=>setMenu(menu==='account'?null:'account')}><span className="header-avatar">{viewer?.avatar_key?<SafeImage src={`/api/profile-avatar/${viewer.user_id}?v=${encodeURIComponent(viewer.avatar_key)}`} alt=""/>:initials}</span><span>{viewer?.display_name||'Tài khoản'}</span><ChevronDown className="nav-chevron" size={15} strokeWidth={1.8}/></button>{menu==='account'&&<AccountDropdown viewer={viewer} logout={logout}/>}</div>
+      <div className="nav-group account-group"><button type="button" className={`account-trigger${menu==='account'?' open':''}`} aria-expanded={menu==='account'} onClick={()=>setMenu(menu==='account'?null:'account')}><span className="header-avatar">{avatarSource?<SafeImage src={avatarSource} alt=""/>:initials}</span><span>{viewer?.display_name||'Tài khoản'}</span><ChevronDown className="nav-chevron" size={15} strokeWidth={1.8}/></button>{menu==='account'&&<AccountDropdown viewer={viewer} logout={logout}/>}</div>
     </nav>
     <button type="button" className="menu-toggle" aria-expanded={mobile} onClick={()=>setMobile(!mobile)} aria-label={mobile?'Đóng menu':'Mở menu'}>{mobile?<X/>:<Menu/>}</button>
   </div></header>;
