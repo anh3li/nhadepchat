@@ -4,7 +4,7 @@ import { productSelect } from '../../../../lib/marketplace';
 type CollectionRule={id:string;where:string;bindings:unknown[]};
 
 const collectionRules:CollectionRule[]=[
-  {id:'nha-pho-5m',where:'p.building_type=? AND p.width=5',bindings:['Nhà phố']},
+  {id:'nha-pho-5m',where:'p.building_type=? AND p.width=5 AND p.title NOT LIKE ?',bindings:['Nhà phố','%Nhà cấp 4%']},
   {id:'biet-thu-2-tang',where:'p.building_type LIKE ? AND p.floors=2',bindings:['%Biệt thự%']},
   {id:'nha-cap-4-dep',where:'(p.building_type LIKE ? OR p.title LIKE ?)',bindings:['%Nhà cấp 4%','%Nhà cấp 4%']},
   {id:'nha-xuong-tieu-chuan',where:'(p.building_type LIKE ? OR p.title LIKE ?)',bindings:['%Nhà xưởng%','%Nhà xưởng%']},
