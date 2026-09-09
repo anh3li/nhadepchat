@@ -60,11 +60,11 @@ export default async function Home() {
       <div className="home-catalog">
       <HomeDrawings products={products}/>
       <section className="collections" id="collections">
-        <div className="section-heading home-classic-heading"><h2>BỘ SƯU TẬP NỔI BẬT</h2><Link href="/bo-suu-tap">Xem tất cả →</Link></div>
+        <div className="section-heading home-classic-heading"><h2>THƯ VIỆN BẢN VẼ NỔI BẬT</h2><Link href="/bo-suu-tap">Xem tất cả →</Link></div>
         <div className="collection-grid">{collections.map((item, index) => { const summary=data.collections[item.id]; return <Link className="collection-card" href={`/bo-suu-tap#${item.id}`} key={item.id}><div className="collection-cover" style={{backgroundPosition: `${index * 25}% center`}} aria-hidden/><span><strong>{item.name}</strong><small>{number(summary?.count)} hồ sơ</small></span></Link> })}</div>
       </section>
       </div>
     </main>
-    <footer><div className="shell footer-inner"><BrandLogo className="footer-logo"/><p>Nền tảng chia sẻ hồ sơ xây dựng từ cộng đồng kiến trúc sư và kỹ sư Việt Nam.</p><nav><Link href="/tim-kiem">Bản vẽ</Link><Link href="/bo-suu-tap">Bộ sưu tập</Link><Link href="/cong-dong">Cộng đồng</Link><Link href="/dang-ban">Đăng bán</Link></nav></div></footer>
+    <footer><div className="shell footer-inner"><BrandLogo className="footer-logo"/><p>Nền tảng chia sẻ hồ sơ xây dựng từ cộng đồng kiến trúc sư và kỹ sư Việt Nam.</p><nav><Link href="/tim-kiem">Bản vẽ</Link><Link href="/bo-suu-tap">Thư viện bản vẽ</Link><Link href="/cong-dong">Cộng đồng</Link><Link href="/dang-ban">Đăng bán</Link></nav></div></footer>
   </>;
 }

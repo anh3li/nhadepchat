@@ -6,7 +6,7 @@ type BrandLogoProps = {
   subtitle?: string;
 };
 
-export function BrandLogo({ className = '', subtitle = 'MẪU NHÀ · BẢN VẼ · KTS' }: BrandLogoProps) {
+export function BrandLogo({ className = '', subtitle = 'THƯ VIỆN HỒ SƠ XÂY DỰNG' }: BrandLogoProps) {
   return (
     <Link className={`logo brand-logo ${className}`.trim()} href="/" aria-label="Nhà Đẹp Chất — về trang chủ">
       <Image className="logo-mark" src="/brand-mark.png" width={48} height={48} alt="" aria-hidden />

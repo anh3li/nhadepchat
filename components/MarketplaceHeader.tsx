@@ -190,9 +190,9 @@ export function MarketplaceHeader({ initialViewer, initialCartCount }: { initial
           <button type="button" className={activeMenu === 'drawings' ? 'open' : ''} aria-expanded={activeMenu === 'drawings'} onClick={() => toggleMenu('drawings')}>Bản vẽ<ChevronDown className="nav-chevron" size={15} strokeWidth={1.8}/></button>
           <MegaMenu open={activeMenu === 'drawings'}/>
         </div>
-        <Link href="/bo-suu-tap">Bộ sưu tập</Link>
+        <Link href="/bo-suu-tap">Thư viện</Link>
         <div className="nav-group community">
-          <button type="button" className={activeMenu === 'community' ? 'open' : ''} aria-expanded={activeMenu === 'community'} onClick={() => toggleMenu('community')}>Liên hệ KTS &amp; Kỹ sư<ChevronDown className="nav-chevron" size={15} strokeWidth={1.8}/></button>
+          <button type="button" className={activeMenu === 'community' ? 'open' : ''} aria-expanded={activeMenu === 'community'} onClick={() => toggleMenu('community')}>Liên hệ<ChevronDown className="nav-chevron" size={15} strokeWidth={1.8}/></button>
           <CommunityMenu open={activeMenu === 'community'}/>
         </div>
         <Link href="/dang-ban">Đăng bán</Link>
