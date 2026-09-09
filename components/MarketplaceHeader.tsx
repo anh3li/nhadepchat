@@ -49,7 +49,7 @@ import { BrandLogo } from './BrandLogo';
 type MenuName = 'drawings' | 'community' | 'account';
 
 const groups = [
-  { title: 'Theo công trình', items: ['Nhà phố','Nhà cấp 4','Biệt thự','Nhà vườn','Nhà xưởng','Văn phòng','Trường học','Chung cư'] },
+  { title: 'Theo công trình', items: ['Nhà phố','Nhà cấp 4','Biệt thự','Nhà vườn','Nhà xưởng','Văn phòng','Trường học','Chung cư','Công trình khác'] },
   { title: 'Theo hồ sơ', items: ['Kiến trúc','Kết cấu','Điện','Cấp thoát nước','MEP','Nội thất','Quy hoạch','Biện pháp thi công'] },
   { title: 'Tài nguyên', items: ['AutoCAD','SketchUp','Revit','Excel dự toán','File tính kết cấu','Block CAD','Thuyết minh','Bản vẽ miễn phí'] },
 ];
@@ -196,7 +196,7 @@ function MegaMenu({ open }: { open: boolean }) {
 }
 
 function CommunityMenu({ open }: { open: boolean }) {
-  return <div className={menuClass('community-menu', open)} aria-hidden={!open}><section><h3>KIẾN TRÚC SƯ</h3><Link href="/cong-dong" tabIndex={open ? 0 : -1}>Danh sách KTS</Link><Link href="/cong-dong?sap-xep=noi-bat" tabIndex={open ? 0 : -1}>KTS nổi bật</Link><Link href="/cong-dong?sap-xep=moi" tabIndex={open ? 0 : -1}>KTS mới tham gia</Link></section><section><h3>CỘNG ĐỒNG</h3><Link href="/cong-dong?vai-tro=engineer" tabIndex={open ? 0 : -1}>Kỹ sư</Link><Link href="/cong-dong?vai-tro=interior_designer" tabIndex={open ? 0 : -1}>Nhà thiết kế nội thất</Link><Link href="/cong-dong?vai-tro=contractor" tabIndex={open ? 0 : -1}>Nhà thầu</Link><Link href="/cong-dong?sap-xep=moi" tabIndex={open ? 0 : -1}>Hoạt động mới</Link><Link href="/cong-dong#yeu-cau-ban-ve" tabIndex={open ? 0 : -1}>Yêu cầu bản vẽ</Link></section></div>;
+  return <div className={menuClass('community-menu', open)} aria-hidden={!open}><section><h3>KIẾN TRÚC SƯ</h3><Link href="/cong-dong" tabIndex={open ? 0 : -1}>Danh sách KTS</Link><Link href="/cong-dong?sap-xep=noi-bat" tabIndex={open ? 0 : -1}>KTS nổi bật</Link><Link href="/cong-dong?sap-xep=moi" tabIndex={open ? 0 : -1}>KTS mới tham gia</Link><Link href="/cong-dong?sap-xep=noi-bat" tabIndex={open ? 0 : -1}>KTS được đánh giá cao</Link></section><section><h3>CỘNG ĐỒNG</h3><Link href="/cong-dong?vai-tro=engineer" tabIndex={open ? 0 : -1}>Kỹ sư</Link><Link href="/cong-dong?vai-tro=interior_designer" tabIndex={open ? 0 : -1}>Nhà thiết kế nội thất</Link><Link href="/cong-dong?vai-tro=contractor" tabIndex={open ? 0 : -1}>Nhà thầu</Link><Link href="/cong-dong?sap-xep=moi" tabIndex={open ? 0 : -1}>Hoạt động mới</Link><Link href="/cong-dong#yeu-cau-ban-ve" tabIndex={open ? 0 : -1}>Yêu cầu bản vẽ</Link></section></div>;
 }
 
 function AccountDropdown({ open, viewer, logout }: { open: boolean; viewer: HeaderViewer | null; logout: () => void }) {

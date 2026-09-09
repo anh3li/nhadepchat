@@ -645,7 +645,7 @@ footer { padding: 22px 0; color: #dce7f3; background: #112e51; }
   --red: #c92d3d;
 }
 html { scroll-behavior: auto; }
-body { background: linear-gradient(180deg, #f8fafc 0, #fff 520px); }
+body { background: #fff; }
 .site-header { position: sticky; top: 0; z-index: 50; height: 72px; background: #fffffff2; border-bottom-color: #dce4ec; box-shadow: 0 5px 20px #17324d08; backdrop-filter: blur(16px); }
 .navigation-progress { position: absolute; z-index: 60; right: 0; bottom: -1px; left: 0; height: 2px; overflow: hidden; opacity: 0; pointer-events: none; }
 .navigation-progress::after { display: block; width: 36%; height: 100%; background: #1688df; content: ''; transform: translateX(-110%); }
@@ -665,36 +665,36 @@ body { background: linear-gradient(180deg, #f8fafc 0, #fff 520px); }
 .brand-logo { border-radius: 10px; transition: opacity 140ms ease; }
 .brand-logo:hover { opacity: .84; }
 
-.marketplace-v2 { gap: 38px 24px; padding-top: 24px; }
+.marketplace-v2 { gap: 34px 24px; padding-top: 24px; }
 .marketplace-v2 > * { min-width: 0; }
 
-.architect-panel, .popular-panel { height: auto; border-radius: 14px; box-shadow: 0 9px 30px #17324d0a; }
-.architect-panel { height: 470px; padding: 22px; }
-.panel-head { height: 51px; }
+.architect-panel, .popular-panel { border-radius: 6px; box-shadow: 0 5px 18px #17324d08; }
+.architect-panel { height: 404px; padding: 18px 19px; }
+.panel-head { height: 40px; }
 .panel-head > div > small { display: block; margin-bottom: 4px; color: var(--blue2); font-size: 9px; font-weight: 850; letter-spacing: 1.2px; }
 .panel-head > div > h2 { font-size: 16px; text-transform: none; }
 .panel-head a { display: inline-flex; align-items: center; gap: 4px; }.panel-head a svg { width: 13px; }
-.architect-row { min-height: 87px; }
-.architect-row > img, .architect-avatar { width: 43px; height: 43px; }
+.architect-row { min-height: 82px; }
+.architect-row > img, .architect-avatar { width: 50px; height: 50px; }
 .architect-row h3 svg { width: 15px; height: 15px; margin-left: 4px; color: var(--blue2); vertical-align: -2px; }
 
-.marketplace-v2 .section-heading { min-height: 58px; height: auto; }
+.marketplace-v2 .section-heading { min-height: 38px; height: 38px; }
 .marketplace-v2 .section-heading > div > .eyebrow { margin-bottom: 3px; }
-.marketplace-v2 .section-heading h2 { font-size: 22px; text-transform: none; letter-spacing: -.35px; }
+.marketplace-v2 .section-heading h2 { font-size: 20px; letter-spacing: .25px; }
 .marketplace-v2 .section-heading > a { display: inline-flex; align-items: center; gap: 5px; color: var(--blue2); font-size: 12px; font-weight: 750; }
 .marketplace-v2 .section-heading > a svg { width: 15px; }
 .marketplace-v2 .product-grid { gap: 14px; }
-.product-card { border-radius: 11px; box-shadow: 0 8px 24px #19344e0b; transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease; }
+.product-card { border-radius: 6px; box-shadow: 0 5px 18px #19344e08; transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease; }
 .product-card:hover { border-color: #b8c9d9; box-shadow: 0 16px 34px #19344e16; transform: translateY(-3px); }
 .product-image { background: #eaf0f5; }
 .product-card.compact .product-image { height: 176px; }
 .product-card.compact .product-body { padding: 13px; }
-.popular-panel { padding: 22px; }
-.popular-row { grid-template-columns: 30px minmax(0,1fr) auto; min-height: 67px; }
+.popular-panel { padding: 18px 19px; }
+.popular-row { grid-template-columns: 72px minmax(0,1fr) auto; min-height: 78px; }
 .popular-row > span { min-width: 0; }.popular-row strong { overflow: hidden; text-overflow: ellipsis; }
 .popular-rank { color: #9caaba; font-size: 11px; font-weight: 850; }
 .popular-row > b { align-self: center; }
-.collection-card { overflow: hidden; border-radius: 12px; }
+.collection-card { overflow: hidden; border-radius: 6px; }
 .collection-card > span:last-child { background: linear-gradient(0deg,#071b2fef 0%,#071b2f0a 100%); }
 .collection-card small { display: flex; align-items: center; gap: 5px; }
 .collection-card small svg { width: 13px; }

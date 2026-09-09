@@ -1,17 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Link from 'next/link';
-import { ArrowRight, BadgeCheck } from 'lucide-react';
-import { ProductCard } from '../components/ProductCard';
+import { BadgeCheck } from 'lucide-react';
 import { SafeImage } from '../components/SafeImage';
 import { BrandLogo } from '../components/BrandLogo';
+import { HomeDrawings } from '../components/HomeDrawings';
 import { getHomeData } from '../lib/home-data';
 
 const collections = [
-  { id: 'nha-pho-5m', name: 'Nhà phố 5m' },
-  { id: 'biet-thu-2-tang', name: 'Biệt thự 2 tầng' },
-  { id: 'nha-cap-4-dep', name: 'Nhà cấp 4 đẹp' },
-  { id: 'nha-xuong-tieu-chuan', name: 'Nhà xưởng tiêu chuẩn' },
-  { id: 'file-ket-cau-hay', name: 'File kết cấu hay' },
+  { id: 'nha-pho-5m', name: 'NHÀ PHỐ 5M' },
+  { id: 'biet-thu-2-tang', name: 'BIỆT THỰ 2 TẦNG' },
+  { id: 'nha-cap-4-dep', name: 'NHÀ CẤP 4 ĐẸP' },
+  { id: 'nha-xuong-tieu-chuan', name: 'NHÀ XƯỞNG TIÊU CHUẨN' },
+  { id: 'file-ket-cau-hay', name: 'FILE KẾT CẤU HAY' },
 ];
 
 const number = (value: unknown) => Number(value || 0).toLocaleString('vi-VN');
@@ -47,23 +47,20 @@ export default async function Home() {
       </section>
 
       <aside className="architect-panel">
-        <div className="panel-head"><div><small>CỘNG ĐỒNG</small><h2>Chuyên gia nổi bật</h2></div><Link href="/cong-dong">Xem tất cả <ArrowRight/></Link></div>
-        {architects.length ? architects.map((person) => { const avatar=person.avatar_key?`/api/profile-avatar/${person.user_id}?v=${encodeURIComponent(person.avatar_key)}`:person.account_image||''; return <Link className="architect-row" href={`/kts/${person.slug}`} key={person.slug}>{avatar?<SafeImage src={avatar} alt=""/>:<span className="architect-avatar">{String(person.display_name).split(' ').slice(-2).map((part:string)=>part[0]).join('')}</span>}<div><h3>{person.display_name}{person.verification_status==='verified'&&<BadgeCheck aria-label="Đã xác minh"/>}</h3><p>{number(person.file_count)} hồ sơ · {number(person.download_count)} lượt tải</p></div><span className="architect-rating">{person.review_count?`★ ${Number(person.rating).toFixed(1)}`:'Mới'}</span></Link> }) : <div className="panel-empty">Chưa có chuyên gia nổi bật.</div>}
+        <div className="panel-head"><h2>KTS NỔI BẬT</h2><Link href="/cong-dong?sap-xep=noi-bat">Xem tất cả →</Link></div>
+        {architects.length ? architects.map((person) => { const avatar=person.avatar_key?`/api/profile-avatar/${person.user_id}?v=${encodeURIComponent(person.avatar_key)}`:person.account_image||''; return <Link className="architect-row" href={`/kts/${person.slug}`} key={person.slug}>{avatar?<SafeImage src={avatar} alt={person.display_name}/>:<span className="architect-avatar">{String(person.display_name).split(' ').slice(-2).map((part:string)=>part[0]).join('')}</span>}<div><h3>{person.display_name}{person.verification_status==='verified'&&<BadgeCheck aria-label="Đã xác minh"/>}</h3><p>{number(person.file_count)} hồ sơ · {number(person.download_count)} lượt tải</p></div><span className="architect-rating">★ {person.review_count?Number(person.rating).toFixed(1):'Mới'}</span></Link> }) : <div className="panel-empty">Chưa có KTS nổi bật.</div>}
       </aside>
 
-      <section className="drawings" id="drawings">
-        <div className="section-heading"><div><p className="eyebrow">MỚI CẬP NHẬT</p><h2>Hồ sơ mới nhất</h2></div><Link href="/tim-kiem">Xem tất cả <ArrowRight/></Link></div>
-        {products.length ? <div className="product-grid">{products.slice(0, 5).map((product) => <ProductCard compact key={product.id} product={product}/>)}</div> : <div className="empty-state"><h2>Chưa có bản vẽ đã duyệt</h2><p>Hồ sơ mới sẽ xuất hiện tại đây sau khi được kiểm duyệt.</p></div>}
-      </section>
+      <HomeDrawings products={products}/>
 
       <aside className="popular-panel">
-        <div className="panel-head"><div><small>ĐƯỢC QUAN TÂM</small><h2>Tải nhiều nhất</h2></div></div>
-        {popular.slice(0, 5).map((product, index) => <Link className="popular-row" href={`/ban-ve/${product.slug}`} key={product.id}><span className="popular-rank">{String(index + 1).padStart(2, '0')}</span><span><strong>{product.title}</strong><small>{number(product.download_count)} lượt tải</small></span><b className={product.is_free?'free-price':''}>{product.is_free?'Miễn phí':`${number(product.price)}đ`}</b></Link>)}
+        <div className="panel-head"><h2>BẢN VẼ TẢI NHIỀU</h2><Link href="/tim-kiem?sap-xep=tai-nhieu">Xem tất cả →</Link></div>
+        {popular.length ? popular.slice(0, 5).map((product) => { const image=product.cover_id?`/api/assets/${product.cover_id}`:''; const size=product.width&&product.length?`${product.width} × ${product.length}m`:'Chưa cập nhật'; return <Link className="popular-row" href={`/ban-ve/${product.slug}`} key={product.id}>{image?<SafeImage className="popular-media" src={image} alt={product.title}/>:<span className="image-placeholder popular-media"/>}<span><strong>{product.title}</strong><small>{size} · {number(product.download_count)} lượt tải</small></span><b className={product.is_free?'free-price':''}>{product.is_free?'MIỄN PHÍ':`${number(product.price)}đ`}</b></Link> }) : <div className="panel-empty">Chưa có dữ liệu lượt tải.</div>}
       </aside>
 
       <section className="collections" id="collections">
-        <div className="section-heading"><div><p className="eyebrow">TUYỂN CHỌN THEO NHU CẦU</p><h2>Bộ sưu tập nổi bật</h2></div><Link href="/bo-suu-tap">Khám phá tất cả <ArrowRight/></Link></div>
-        {activeCollections.length ? <div className="collection-grid">{activeCollections.map((item) => { const summary=data.collections[item.id]; const image=summary.cover_id?`/api/assets/${summary.cover_id}`:''; return <Link className="collection-card" href={`/bo-suu-tap#${item.id}`} key={item.id}>{image?<SafeImage src={image} alt={item.name}/>:<span className="image-placeholder"/>}<span><strong>{item.name}</strong><small>{number(summary.count)} hồ sơ <ArrowRight/></small></span></Link> })}</div> : <div className="empty-state"><h2>Chưa có bộ sưu tập</h2><p>Các nhóm hồ sơ sẽ xuất hiện tự động khi có dữ liệu phù hợp.</p></div>}
+        <div className="section-heading home-classic-heading"><h2>BỘ SƯU TẬP NỔI BẬT</h2><Link href="/bo-suu-tap">Xem tất cả →</Link></div>
+        {activeCollections.length ? <div className="collection-grid">{activeCollections.map((item) => { const summary=data.collections[item.id]; const image=summary.cover_id?`/api/assets/${summary.cover_id}`:''; return <Link className="collection-card" href={`/bo-suu-tap#${item.id}`} key={item.id}>{image?<SafeImage src={image} alt={item.name}/>:<span className="image-placeholder"/>}<span><strong>{item.name}</strong><small>{number(summary.count)} hồ sơ</small></span></Link> })}</div> : <div className="empty-state"><h2>Chưa có bộ sưu tập nổi bật</h2><p>Bộ sưu tập sẽ xuất hiện khi có hồ sơ phù hợp đã được duyệt.</p></div>}
       </section>
     </main>
     <footer><div className="shell footer-inner"><BrandLogo className="footer-logo"/><p>Nền tảng chia sẻ hồ sơ xây dựng từ cộng đồng kiến trúc sư và kỹ sư Việt Nam.</p><nav><Link href="/tim-kiem">Bản vẽ</Link><Link href="/bo-suu-tap">Bộ sưu tập</Link><Link href="/cong-dong">Cộng đồng</Link><Link href="/dang-ban">Đăng bán</Link></nav></div></footer>
