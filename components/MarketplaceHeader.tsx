@@ -104,13 +104,6 @@ export function MarketplaceHeader({ initialViewer, initialCartCount }: { initial
   const activeMobile = mobileRoute === pathname && mobileOpen;
 
   useEffect(() => {
-    const id = globalThis.setTimeout(() => {
-      ['/','/tim-kiem','/bo-suu-tap','/cong-dong','/gio-hang'].forEach(route => router.prefetch(route));
-    }, 300);
-    return () => globalThis.clearTimeout(id);
-  }, [router]);
-
-  useEffect(() => {
     const closeOutside = (event: MouseEvent) => {
       if (headerRef.current && !headerRef.current.contains(event.target as Node)) {
         setOpenMenu(null);

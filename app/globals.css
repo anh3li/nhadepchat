@@ -1019,3 +1019,7 @@ body { background: #fff; }
 .real-metrics { font-size: 12px; }
 .seller-product-thumb { height: auto; min-height: 0; aspect-ratio: 4 / 5; }
 .media-thumb { height: auto; aspect-ratio: 4 / 5; }
+/* Navigation feedback stays local to the link being opened. */
+.product-card-link { position: relative; }
+.product-link-pending { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgb(255 255 255 / 85%); color: #173d31; font-weight: 600; z-index: 2; }
+.detail-loading-image { width: 100%; aspect-ratio: 16 / 9; max-height: 640px; border-radius: 16px; background: #edf0ed; }

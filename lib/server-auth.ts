@@ -1,11 +1,12 @@
 import { headers } from 'next/headers';
+import { cache } from 'react';
 import { redirect } from 'next/navigation';
 import { auth } from './auth';
 import { getD1 } from '../db';
 
-export async function getSession() {
+export const getSession = cache(async function getSession() {
   return auth.api.getSession({ headers: await headers() });
-}
+});
 
 export async function requireSession(returnTo = '/dashboard') {
   const session = await getSession();
