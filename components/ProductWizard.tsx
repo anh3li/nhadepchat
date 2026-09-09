@@ -57,7 +57,7 @@ function ProductWizardForm({editId}:{editId:string|null}){
         const temp=`temp-${crypto.randomUUID()}`;
         setUploads(v=>[...v,{id:temp,name:file.name,size:file.size,progress:0,kind}]);
         try {
-          const uploadFile=kind==='preview'?await optimizeImageToWebp(file,{maxDimension:2400,maxBytes:4*1024*1024}):file;
+          const uploadFile=kind==='preview'?await optimizeImageToWebp(file,{maxDimension:1600,maxBytes:2*1024*1024,quality:.78}):file;
           setUploads(v=>v.map(x=>x.id===temp?{...x,name:uploadFile.name,size:uploadFile.size,progress:2}:x));
           const result=await uploadProductFile(productId,uploadFile,kind,progress=>setUploads(v=>v.map(x=>x.id===temp?{...x,progress}:x)));
           const extension=uploadFile.name.split('.').pop()?.toUpperCase()||'';
@@ -136,7 +136,7 @@ function UploadStep({disabled,kind,items,coverId,onFiles,onDrop,onRemove,onReord
   const cover=ready.find(item=>item.id===coverId)||ready[0];
   function show(id:string){opener.current=document.activeElement as HTMLElement;setView(ready.findIndex(item=>item.id===id))}
   return <div className={kind==='preview'?'media-manager':'file-manager'} aria-busy={disabled}>
-    {kind==='preview'&&cover&&<section className="cover-preview"><SafeImage src={cover.url!} alt="Ảnh bìa hiện tại"/><div><span>ẢNH BÌA HIỆN TẠI</span><b>{cover.name}</b><button className="outline-action" type="button" onClick={()=>show(cover.id)}><Eye size={16}/>Xem ảnh lớn</button><small>Chọn biểu tượng ngôi sao bên dưới để đổi ảnh bìa.</small></div></section>}
+    {kind==='preview'&&cover&&<section className="cover-preview"><SafeImage src={cover.url!} alt="Ảnh bìa hiện tại" loading="eager" fetchPriority="high"/><div><span>ẢNH BÌA HIỆN TẠI</span><b>{cover.name}</b><button className="outline-action" type="button" onClick={()=>show(cover.id)}><Eye size={16}/>Xem ảnh lớn</button><small>Chọn biểu tượng ngôi sao bên dưới để đổi ảnh bìa.</small></div></section>}
     <div className="drop-zone" onDragOver={e=>e.preventDefault()} onDrop={e=>{if(disabled)e.preventDefault();else onDrop(e)}}>
       {kind==='preview'?<ImagePlus/>:<UploadCloud/>}<b>{kind==='preview'?'Kéo ảnh vào đây hoặc chọn ảnh':'Kéo file vào đây hoặc chọn file'}</b>
       <span>{kind==='preview'?'JPG, PNG, WEBP · tự động nén và chuyển sang WEBP':'DWG, SKP, RVT, PDF, XLSX, DOCX, ZIP, RAR · 250MB/file · File nguồn riêng tư'}</span>

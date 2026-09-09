@@ -12,7 +12,7 @@ export function ProductGallery({images,compact=false}:{images:GalleryImage[];com
   if(!images.length)return <div className={`gallery-empty${compact?' compact':''}`}>Chưa có ảnh xem trước</div>;
   const safeIndex=Math.min(index,images.length-1),active=images[safeIndex];
   return <div className={`product-gallery${compact?' compact':''}`}>
-    <button ref={opener} type="button" className="gallery-main" onClick={()=>setOpen(true)} aria-label="Mở ảnh toàn màn hình">{failed.has(active.id)?<span>Không thể tải ảnh</span>:<img src={active.src} alt={active.alt} onError={()=>setFailed(old=>new Set(old).add(active.id))}/>}<span className="gallery-expand"><Maximize2 size={18}/>Xem toàn màn hình</span></button>
+    <button ref={opener} type="button" className="gallery-main" onClick={()=>setOpen(true)} aria-label="Mở ảnh toàn màn hình">{failed.has(active.id)?<span>Không thể tải ảnh</span>:<img src={active.src} alt={active.alt} loading="eager" fetchPriority="high" decoding="async" onError={()=>setFailed(old=>new Set(old).add(active.id))}/>}<span className="gallery-expand"><Maximize2 size={18}/>Xem toàn màn hình</span></button>
     {images.length>1&&<div className="gallery-thumbs" aria-label="Danh sách ảnh">{images.map((image,i)=><button type="button" className={i===safeIndex?'active':''} key={image.id} onClick={()=>setIndex(i)} aria-label={`Xem ảnh ${i+1}`}><img src={image.src} alt="" loading="lazy"/><span>{i+1}</span></button>)}</div>}
     {open&&<ImageViewer images={images} initial={safeIndex} onIndex={setIndex} onClose={()=>{setOpen(false);setTimeout(()=>opener.current?.focus(),0)}}/>}
   </div>;

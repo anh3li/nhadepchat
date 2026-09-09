@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   FormEvent,
-  MouseEvent as ReactMouseEvent,
   useEffect,
   useRef,
   useState,
@@ -148,17 +147,6 @@ export function MarketplaceHeader({ initialViewer, initialCartCount }: { initial
     startNavigation(() => router.push(href));
   }
 
-  function navigate(event: ReactMouseEvent<HTMLElement>) {
-    const anchor = (event.target as HTMLElement).closest<HTMLAnchorElement>('a[href]');
-    if (!anchor || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || anchor.target === '_blank' || anchor.hasAttribute('download')) return;
-    const url = new URL(anchor.href, location.href);
-    if (url.origin !== location.origin) return;
-    const href = `${url.pathname}${url.search}${url.hash}`;
-    if (href === `${location.pathname}${location.search}${location.hash}`) return;
-    event.preventDefault();
-    beginNavigation(href);
-  }
-
   function search(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const query = String(new FormData(event.currentTarget).get('q') || '').trim();
@@ -180,7 +168,7 @@ export function MarketplaceHeader({ initialViewer, initialCartCount }: { initial
     ? `/api/profile-avatar/${viewer.user_id}?v=${encodeURIComponent(viewer.avatar_key)}`
     : viewer?.account_image || '';
 
-  return <header className={`site-header${navigating ? ' is-navigating' : ''}`} ref={headerRef} onClick={navigate}>
+  return <header className={`site-header${navigating ? ' is-navigating' : ''}`} ref={headerRef}>
     <span className="navigation-progress" aria-hidden />
     <div className="shell header-inner">
       <BrandLogo />
