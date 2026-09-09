@@ -4,19 +4,22 @@ import { SiteChrome } from '../components/SiteChrome';
 import { getHeaderData } from '../lib/header-data';
 export const metadata: Metadata = {
   metadataBase: new URL('https://nhadepchat.tranvukim-tvk.workers.dev'),
-  title: 'Nhà Đẹp Chất | Mẫu nhà, bản vẽ và kiến trúc sư',
-  description: 'Marketplace bản vẽ kiến trúc, kết cấu, MEP và dự toán từ cộng đồng KTS và kỹ sư.',
+  title: 'Bản vẽ nhà đẹp, mẫu nhà đẹp | Nhà Đẹp Chất',
+  description: 'Nhà Đẹp Chất cung cấp bản vẽ nhà đẹp, mẫu nhà đẹp và file bản vẽ nhà đẹp cho kiến trúc, kết cấu, MEP từ cộng đồng KTS và kỹ sư.',
+  keywords: ['bản vẽ nhà đẹp', 'mẫu nhà đẹp', 'file bản vẽ nhà đẹp', 'nhà đẹp chất'],
+  alternates: { canonical: '/' },
+  robots: { index: true, follow: true },
   openGraph: {
-    title: 'Nhà Đẹp Chất',
-    description: 'Mẫu nhà · Bản vẽ · KTS',
+    title: 'Bản vẽ nhà đẹp, mẫu nhà đẹp | Nhà Đẹp Chất',
+    description: 'Khám phá mẫu nhà đẹp, bản vẽ nhà đẹp và file bản vẽ nhà đẹp được tuyển chọn.',
     images: ['/og.png'],
     locale: 'vi_VN',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Nhà Đẹp Chất',
-    description: 'Mẫu nhà · Bản vẽ · KTS',
+    title: 'Bản vẽ nhà đẹp, mẫu nhà đẹp | Nhà Đẹp Chất',
+    description: 'Khám phá mẫu nhà đẹp, bản vẽ nhà đẹp và file bản vẽ nhà đẹp được tuyển chọn.',
     images: ['/og.png'],
   },
   icons: {

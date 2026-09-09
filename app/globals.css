@@ -756,7 +756,7 @@ body { background: #fff; }
 .disciplines .tool { color: #455a72; background: #edf2f7; }
 
 .product-gallery { min-width: 0; align-self: start; }
-.gallery-main { position: relative; display: grid; overflow: hidden; place-items: center; width: 100%; aspect-ratio: 4 / 5; padding: 0; color: #536477; background: #eef2f6; border: 0; border-radius: 7px; cursor: zoom-in; }
+.gallery-main { position: relative; display: grid; overflow: hidden; place-items: center; width: 100%; aspect-ratio: 16 / 10.5; padding: 0; color: #536477; background: #eef2f6; border: 0; border-radius: 7px; cursor: zoom-in; }
 .gallery-main img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #f4f6f8; }
 .gallery-main > svg { position: absolute; right: 13px; bottom: 13px; box-sizing: content-box; padding: 9px; color: #fff; background: #0c1d30b8; border-radius: 5px; }
 .gallery-thumbs { display: flex; gap: 9px; overflow-x: auto; margin-top: 10px; padding: 2px; scrollbar-width: thin; }
@@ -765,7 +765,7 @@ body { background: #fff; }
 .gallery-thumbs img { width: 100%; height: 100%; object-fit: contain; background: #eef2f5; }
 .gallery-empty { display: grid; place-items: center; min-height: 360px; color: var(--muted); background: #eef2f6; border-radius: 7px; }
 .gallery-empty.compact { min-height: 220px; }
-.product-gallery.compact .gallery-main { aspect-ratio: 4 / 5; }
+.product-gallery.compact .gallery-main { aspect-ratio: 16 / 9; }
 
 .lightbox { position: fixed; z-index: 1000; inset: 0; display: grid; place-items: center; color: #fff; background: #07101bf2; outline: 0; touch-action: none; }
 .lightbox-stage { position: absolute; inset: 64px 64px 48px; display: grid; overflow: hidden; place-items: center; cursor: grab; }
