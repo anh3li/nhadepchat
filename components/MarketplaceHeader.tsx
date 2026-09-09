@@ -174,6 +174,7 @@ export function MarketplaceHeader({ initialViewer, initialCartCount }: { initial
       <BrandLogo />
       <form className="search" role="search" onSubmit={search}><Search className="search-leading-icon" aria-hidden size={20} strokeWidth={1.6}/><input type="search" name="q" aria-label="Tìm kiếm bản vẽ" placeholder="Tìm nhà 5x20 2 tầng, biệt thự mái nhật, file CAD..."/><button type="submit" aria-label="Tìm kiếm"><Search aria-hidden size={20} strokeWidth={1.8}/></button></form>
       <nav className={activeMobile ? 'main-nav mobile-open' : 'main-nav'} aria-label="Điều hướng chính">
+        <Link href="/gioi-thieu">Giới thiệu</Link>
         <div className="nav-group">
           <button type="button" className={activeMenu === 'drawings' ? 'open' : ''} aria-expanded={activeMenu === 'drawings'} onClick={() => toggleMenu('drawings')}>Bản vẽ<ChevronDown className="nav-chevron" size={15} strokeWidth={1.8}/></button>
           <MegaMenu open={activeMenu === 'drawings'}/>

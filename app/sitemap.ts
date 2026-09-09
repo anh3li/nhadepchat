@@ -5,6 +5,7 @@ const origin = 'https://nhadepchat.tranvukim-tvk.workers.dev';
 export default function sitemap(): MetadataRoute.Sitemap {
   const routes = [
     '/',
+    '/gioi-thieu',
     '/tim-kiem',
     '/bo-suu-tap',
     '/cong-dong',
