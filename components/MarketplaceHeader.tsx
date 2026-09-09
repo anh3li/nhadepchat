@@ -67,6 +67,18 @@ const icons: Record<string, LucideIcon> = {
   'Điện': Zap,
   'Cấp thoát nước': Droplets,
   AutoCAD: FileText,
+  'Nhà vườn': House,
+  'Công trình khác': Building2,
+  MEP: Layers3,
+  'Nội thất': Store,
+  'Quy hoạch': Landmark,
+  'Biện pháp thi công': FileText,
+  SketchUp: PackageCheck,
+  Revit: Building2,
+  'Excel dự toán': FileText,
+  'File tính kết cấu': FileText,
+  'Block CAD': Layers3,
+  'Thuyết minh': FileText,
   'Bản vẽ miễn phí': Download,
 };
 
@@ -164,7 +176,7 @@ export function MarketplaceHeader({ initialViewer, initialCartCount }: { initial
     <span className="navigation-progress" aria-hidden />
     <div className="shell header-inner">
       <BrandLogo />
-      <form className="search" role="search" onSubmit={search}><input type="search" name="q" aria-label="Tìm kiếm bản vẽ" placeholder="Tìm nhà 5x20, biệt thự 2 tầng, file CAD..."/><button type="submit" aria-label="Tìm kiếm"><Search aria-hidden size={20} strokeWidth={1.8}/></button></form>
+      <form className="search" role="search" onSubmit={search}><Search className="search-leading-icon" aria-hidden size={20} strokeWidth={1.6}/><input type="search" name="q" aria-label="Tìm kiếm bản vẽ" placeholder="Tìm nhà 5x20 2 tầng, biệt thự mái nhật, file CAD..."/><button type="submit" aria-label="Tìm kiếm"><Search aria-hidden size={20} strokeWidth={1.8}/></button></form>
       <nav className={activeMobile ? 'main-nav mobile-open' : 'main-nav'} aria-label="Điều hướng chính">
         <div className="nav-group">
           <button type="button" className={activeMenu === 'drawings' ? 'open' : ''} aria-expanded={activeMenu === 'drawings'} onClick={() => toggleMenu('drawings')}>Bản vẽ<ChevronDown className="nav-chevron" size={15} strokeWidth={1.8}/></button>
@@ -178,7 +190,7 @@ export function MarketplaceHeader({ initialViewer, initialCartCount }: { initial
         <Link href="/dang-ban">Đăng bán</Link>
         <HeaderCartLink initialCount={initialCartCount}/>
         <div className="nav-group account-group">
-          <button type="button" className={`account-trigger${activeMenu === 'account' ? ' open' : ''}`} aria-expanded={activeMenu === 'account'} onClick={() => toggleMenu('account')}><span className="header-avatar">{avatarSource ? <SafeImage src={avatarSource} alt=""/> : initials}</span><span>{viewer?.display_name || 'Tài khoản'}</span><ChevronDown className="nav-chevron" size={15} strokeWidth={1.8}/></button>
+          <button type="button" className={`account-trigger${activeMenu === 'account' ? ' open' : ''}`} aria-expanded={activeMenu === 'account'} onClick={() => toggleMenu('account')}><span className="header-avatar">{avatarSource ? <SafeImage src={avatarSource} alt=""/> : viewer ? initials : <UserRound size={18}/>}</span><span>{viewer?.display_name || 'Tài khoản'}</span><ChevronDown className="nav-chevron" size={15} strokeWidth={1.8}/></button>
           <AccountDropdown open={activeMenu === 'account'} viewer={viewer} logout={logout}/>
         </div>
       </nav>
@@ -192,7 +204,7 @@ function menuClass(base: string, open: boolean) {
 }
 
 function MegaMenu({ open }: { open: boolean }) {
-  return <div className={menuClass('mega-menu', open)} aria-hidden={!open}>{groups.map(group => <section key={group.title}><h3>{group.title}</h3>{group.items.map(item => { const Icon = icons[item]; return <Link className="mega-link" href={`/tim-kiem?q=${encodeURIComponent(item)}`} tabIndex={open ? 0 : -1} key={item}><span className="menu-icon-slot">{Icon && <Icon size={16} strokeWidth={1.8}/>}</span>{item}</Link>; })}</section>)}<Link className="menu-view-all" href="/tim-kiem" tabIndex={open ? 0 : -1}>Xem tất cả bản vẽ<ArrowRight size={15}/></Link></div>;
+  return <div className={menuClass('mega-menu', open)} aria-hidden={!open}>{groups.map(group => <section key={group.title}><h3>{group.title}</h3>{group.items.map(item => { const Icon = icons[item]; return <Link className={`mega-link${item === 'Bản vẽ miễn phí' ? ' menu-free' : ''}`} href={`/tim-kiem?q=${encodeURIComponent(item)}`} tabIndex={open ? 0 : -1} key={item}><span className="menu-icon-slot">{Icon && <Icon size={16} strokeWidth={1.8}/>}</span>{item === 'AutoCAD' ? 'File AutoCAD' : item}</Link>; })}</section>)}<Link className="menu-view-all" href="/tim-kiem" tabIndex={open ? 0 : -1}>Xem tất cả bản vẽ<ArrowRight size={15}/></Link></div>;
 }
 
 function CommunityMenu({ open }: { open: boolean }) {

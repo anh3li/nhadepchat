@@ -646,18 +646,33 @@ footer { padding: 22px 0; color: #dce7f3; background: #112e51; }
 }
 html { scroll-behavior: auto; }
 body { background: #fff; }
-.site-header { position: sticky; top: 0; z-index: 50; height: 72px; background: #fffffff2; border-bottom-color: #dce4ec; box-shadow: 0 5px 20px #17324d08; backdrop-filter: blur(16px); }
+.site-header { position: sticky; top: 0; z-index: 50; height: 82px; background: #fff; border-bottom-color: #e5e8ef; box-shadow: none; --blue: #003fc9; --blue2: #0042d7; }
 .navigation-progress { position: absolute; z-index: 60; right: 0; bottom: -1px; left: 0; height: 2px; overflow: hidden; opacity: 0; pointer-events: none; }
 .navigation-progress::after { display: block; width: 36%; height: 100%; background: #1688df; content: ''; transform: translateX(-110%); }
 .site-header.is-navigating .navigation-progress { opacity: 1; }
 .site-header.is-navigating .navigation-progress::after { animation: navigation-progress 850ms ease-in-out infinite; }
 @keyframes navigation-progress { 50% { transform: translateX(150%); } 100% { transform: translateX(310%); } }
-.submenu-surface { opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(-7px); transition: opacity 140ms ease, transform 140ms ease, visibility 0s linear 140ms; will-change: opacity, transform; }
-.submenu-surface.menu-open { opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0); transition-delay: 0s; }
-.header-inner { grid-template-columns: 194px minmax(280px, 560px) 1fr; }
-.search { height: 42px; background: #f3f6f9; border-radius: 10px; }
-.search button { width: 46px; }
-.main-nav > a, .nav-group > button { padding-inline: 9px; }
+.submenu-surface { opacity: 0; visibility: hidden; pointer-events: none; }
+.submenu-surface.menu-open { opacity: 1; visibility: visible; pointer-events: auto; }
+.header-inner { width: min(1600px, calc(100% - 48px)); grid-template-columns: 230px minmax(240px, 536px) minmax(0,1fr); gap: 20px; }
+.search { align-items: center; height: 46px; background: #fff; border-radius: 5px; }
+.search-leading-icon { flex: 0 0 20px; margin-left: 16px; color: #596477; }
+.search input { padding-left: 10px; font-size: 14px; }
+.search button { flex: 0 0 50px; height: 100%; }
+.main-nav { justify-content: space-between; }
+.main-nav > a, .nav-group > button { padding-inline: 8px; font-size: 13px; color: #111820; }
+.nav-group > button.open { color: var(--blue); }
+.site-header .mega-menu { left: auto; right: 0; width: 510px; gap: 0 18px; padding: 12px 20px 0; border-radius: 7px; }
+.site-header .mega-menu section + section { padding-left: 0; border: 0; }
+.site-header .mega-menu h3, .site-header .community-menu h3 { font-size: 11px; letter-spacing: 0; }
+.site-header .mega-link { min-height: 26px; color: #172234; font-size: 12px; gap: 7px; }
+.site-header .menu-icon-slot { color: inherit; }
+.site-header .menu-free { color: #168329; }
+.site-header .menu-view-all { justify-content: center; margin: 9px -20px 0; padding: 10px; font-size: 13px; }
+.site-header .community-menu { left: auto; right: 0; grid-template-columns: 1fr; gap: 13px; width: 190px; padding: 15px 12px; border-radius: 7px; }
+.site-header .community-menu section + section { padding: 13px 0 0; border-left: 0; border-top: 1px solid var(--line); }
+.site-header .community-menu section > a { padding: 5px 8px; font-size: 11px; border-radius: 4px; }
+.site-header .community-menu section > a:hover { background: #edf2fc; }
 .account-group { width: 150px; }
 .account-trigger { width: 100%; }
 .account-trigger > span:nth-child(2) { width: 92px; max-width: none; text-align: left; }
@@ -706,6 +721,8 @@ body { background: #fff; }
 @media (max-width: 1180px) {
   .header-inner { grid-template-columns: 190px minmax(240px,1fr) auto; }
   .main-nav .submenu-surface:not(.menu-open) { display: none; }
+  .site-header .mega-menu, .site-header .community-menu { position: static; width: 100%; max-width: none; border-radius: 0; box-shadow: none; }
+  .site-header .community-menu { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 900px) {
   .marketplace-v2 { grid-template-columns: minmax(0,1fr); }

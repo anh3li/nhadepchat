@@ -30,7 +30,7 @@ export function HomeDrawings({ products }: { products: ProductCardData[] }) {
       </div>
     </div>
     {sorted.length
-      ? <div className="product-grid">{sorted.slice(0, 5).map((product) => <ProductCard compact key={product.id} product={product}/>)}</div>
+      ? <div className="product-grid">{sorted.slice(0, 5).map((product) => <ProductCard key={product.id} product={product}/>)}</div>
       : <div className="empty-state"><h2>Chưa có bản vẽ đã duyệt</h2><p>Sản phẩm mới sẽ xuất hiện tại đây sau khi được quản trị viên duyệt.</p></div>}
   </section>;
 }
