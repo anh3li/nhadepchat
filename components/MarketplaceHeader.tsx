@@ -11,7 +11,10 @@ import {
   useTransition,
 } from 'react';
 import {
+  Activity,
+  Armchair,
   ArrowRight,
+  BadgeCheck,
   Building,
   Building2,
   ChevronDown,
@@ -21,6 +24,7 @@ import {
   Factory,
   FileText,
   Heart,
+  Hammer,
   Home,
   House,
   Landmark,
@@ -36,6 +40,10 @@ import {
   Store,
   UserPlus,
   UserRound,
+  UserRoundPlus,
+  UsersRound,
+  Wrench,
+  CircleHelp,
   X,
   Zap,
   type LucideIcon,
@@ -184,7 +192,7 @@ export function MarketplaceHeader({ initialViewer, initialCartCount }: { initial
         </div>
         <Link href="/bo-suu-tap">Bộ sưu tập</Link>
         <div className="nav-group community">
-          <button type="button" className={activeMenu === 'community' ? 'open' : ''} aria-expanded={activeMenu === 'community'} onClick={() => toggleMenu('community')}>Cộng đồng<ChevronDown className="nav-chevron" size={15} strokeWidth={1.8}/></button>
+          <button type="button" className={activeMenu === 'community' ? 'open' : ''} aria-expanded={activeMenu === 'community'} onClick={() => toggleMenu('community')}>Liên hệ KTS &amp; Kỹ sư<ChevronDown className="nav-chevron" size={15} strokeWidth={1.8}/></button>
           <CommunityMenu open={activeMenu === 'community'}/>
         </div>
         <Link href="/dang-ban">Đăng bán</Link>
@@ -208,7 +216,27 @@ function MegaMenu({ open }: { open: boolean }) {
 }
 
 function CommunityMenu({ open }: { open: boolean }) {
-  return <div className={menuClass('community-menu', open)} aria-hidden={!open}><section><h3>KIẾN TRÚC SƯ</h3><Link href="/cong-dong" tabIndex={open ? 0 : -1}>Danh sách KTS</Link><Link href="/cong-dong?sap-xep=noi-bat" tabIndex={open ? 0 : -1}>KTS nổi bật</Link><Link href="/cong-dong?sap-xep=moi" tabIndex={open ? 0 : -1}>KTS mới tham gia</Link><Link href="/cong-dong?sap-xep=noi-bat" tabIndex={open ? 0 : -1}>KTS được đánh giá cao</Link></section><section><h3>CỘNG ĐỒNG</h3><Link href="/cong-dong?vai-tro=engineer" tabIndex={open ? 0 : -1}>Kỹ sư</Link><Link href="/cong-dong?vai-tro=interior_designer" tabIndex={open ? 0 : -1}>Nhà thiết kế nội thất</Link><Link href="/cong-dong?vai-tro=contractor" tabIndex={open ? 0 : -1}>Nhà thầu</Link><Link href="/cong-dong?sap-xep=moi" tabIndex={open ? 0 : -1}>Hoạt động mới</Link><Link href="/cong-dong#yeu-cau-ban-ve" tabIndex={open ? 0 : -1}>Yêu cầu bản vẽ</Link></section></div>;
+  return <div className={menuClass('community-menu contact-menu', open)} aria-hidden={!open}>
+    <section>
+      <h3>KIẾN TRÚC SƯ</h3>
+      <ContactMenuLink href="/cong-dong" icon={DraftingCompass} open={open} featured>Danh sách KTS</ContactMenuLink>
+      <ContactMenuLink href="/cong-dong?sap-xep=noi-bat" icon={UsersRound} open={open}>KTS nổi bật</ContactMenuLink>
+      <ContactMenuLink href="/cong-dong?sap-xep=moi" icon={UserRoundPlus} open={open}>KTS mới tham gia</ContactMenuLink>
+      <ContactMenuLink href="/cong-dong?sap-xep=danh-gia-cao" icon={BadgeCheck} open={open}>KTS được đánh giá cao</ContactMenuLink>
+    </section>
+    <section>
+      <h3>CỘNG ĐỒNG</h3>
+      <ContactMenuLink href="/cong-dong?vai-tro=engineer" icon={Wrench} open={open}>Kỹ sư</ContactMenuLink>
+      <ContactMenuLink href="/cong-dong?vai-tro=interior_designer" icon={Armchair} open={open}>Nhà thiết kế nội thất</ContactMenuLink>
+      <ContactMenuLink href="/cong-dong?vai-tro=contractor" icon={Hammer} open={open}>Nhà thầu</ContactMenuLink>
+      <ContactMenuLink href="/cong-dong?sap-xep=moi" icon={Activity} open={open}>Hoạt động mới</ContactMenuLink>
+      <ContactMenuLink href="/cong-dong#yeu-cau-ban-ve" icon={CircleHelp} open={open}>Yêu cầu bản vẽ</ContactMenuLink>
+    </section>
+  </div>;
+}
+
+function ContactMenuLink({ href, icon: Icon, open, featured = false, children }: { href: string; icon: LucideIcon; open: boolean; featured?: boolean; children: React.ReactNode }) {
+  return <Link className={featured ? 'contact-menu-featured' : ''} href={href} tabIndex={open ? 0 : -1}><Icon aria-hidden size={16} strokeWidth={1.7}/><span>{children}</span></Link>;
 }
 
 function AccountDropdown({ open, viewer, logout }: { open: boolean; viewer: HeaderViewer | null; logout: () => void }) {
