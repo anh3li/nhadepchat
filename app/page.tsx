@@ -37,7 +37,7 @@ export default async function Home() {
     <main className="shell marketplace home-reference">
       <section className="hero-main">
         <div className="hero-copy">
-          <h1>Tìm đúng hồ sơ<br/>bạn cần</h1>
+          <h1>Bản vẽ nhà đẹp,<br/>mẫu nhà đẹp</h1>
           <p className="hero-description">Kho bản vẽ nhà đẹp, mẫu nhà đẹp và file bản vẽ nhà đẹp<br/>{' '}được chia sẻ bởi cộng đồng KTS & kỹ sư.</p>
           <div className="hero-actions"><Link className="primary-btn" href="/tim-kiem">Tìm bản vẽ ngay</Link><Link className="secondary-btn" href="/tim-kiem?q=miễn phí">Bản vẽ miễn phí</Link></div>
           <div className="hero-stats"><div><ClipboardCheck aria-hidden/><span><b>{number(stats.product_count)}</b>Hồ sơ bản vẽ</span></div><div><Files aria-hidden/><span><b>{number(stats.free_count)}</b>Bản vẽ miễn phí</span></div><div><UserRound aria-hidden/><span><b>{number(stats.seller_count)}</b>KTS & kỹ sư</span></div><div><UsersRound aria-hidden/><span><b>{number(stats.download_count)}</b>Lượt tải</span></div></div>
