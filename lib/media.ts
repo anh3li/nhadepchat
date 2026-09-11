@@ -2,11 +2,13 @@ const mediaBase = (process.env.NEXT_PUBLIC_MEDIA_URL || '').replace(/\/$/, '');
 
 export function previewImageUrl(id: string | null | undefined, objectKey?: string | null, thumbnailKey?: string | null) {
   const key = thumbnailKey || objectKey;
+  if (process.env.NEXT_PUBLIC_PAGES_SITE === '1' && id) return `/media/${id}.webp`;
   if (mediaBase && key?.startsWith('previews/')) return `${mediaBase}/${key}`;
   return id ? `/api/assets/${id}` : '';
 }
 
 export function largePreviewImageUrl(id: string | null | undefined, objectKey?: string | null) {
+  if (process.env.NEXT_PUBLIC_PAGES_SITE === '1' && id) return `/media/${id}.webp`;
   if (mediaBase && objectKey?.startsWith('previews/')) return `${mediaBase}/${objectKey}`;
   return id ? `/api/assets/${id}` : '';
 }
