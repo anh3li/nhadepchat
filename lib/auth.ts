@@ -3,12 +3,16 @@ import { betterAuth } from 'better-auth';
 import { googleAuthEnabled } from './google-auth';
 
 const productionOrigin = env.BETTER_AUTH_URL || 'http://localhost:3000';
+const pagesOrigin = 'https://nhadepchat.pages.dev';
 
 export const auth = betterAuth({
   database: env.DB,
   secret: env.BETTER_AUTH_SECRET || (process.env.NODE_ENV === 'production' ? undefined : 'local-development-secret-change-me-32chars'),
-  baseURL: productionOrigin,
-  trustedOrigins: [productionOrigin, 'http://localhost:3000'],
+  baseURL: {
+    allowedHosts: [new URL(productionOrigin).host, new URL(pagesOrigin).host, 'localhost:3000', 'localhost:8788'],
+    fallback: productionOrigin,
+  },
+  trustedOrigins: [productionOrigin, pagesOrigin, 'http://localhost:3000', 'http://localhost:8788'],
   emailAndPassword: { enabled: true, minPasswordLength: 12, maxPasswordLength: 128 },
   socialProviders: googleAuthEnabled() ? {
     google: {

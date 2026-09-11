@@ -50,6 +50,20 @@
       "when": 1788911543070,
       "tag": "0006_seller-rating-overrides",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1788912000000,
+      "tag": "0007_public_private_storage",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1788912060000,
+      "tag": "0008_orders_payments",
+      "breakpoints": true
     }
   ]
 }

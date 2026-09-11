@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
+import Link from '../../components/SiteLink';
 import { ArrowRight, CheckCircle2, FileCheck2, FolderSearch, HardHat, Share2 } from 'lucide-react';
 import { SafeImage } from '../../components/SafeImage';
 import './about.css';

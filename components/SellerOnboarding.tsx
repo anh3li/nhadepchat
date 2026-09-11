@@ -1,13 +1,14 @@
 'use client';
+import {useSiteRouter} from './useSiteRouter';
 
 import { FormEvent, useState } from 'react';
-import { useRouter } from 'next/navigation';
+
 import { optimizeImageToWebp } from '../lib/image-optimization';
 
 type ApiResult = { error?: string };
 
 export function SellerOnboarding({ defaultName }: { defaultName: string }) {
-  const router = useRouter();
+  const router = useSiteRouter();
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -46,7 +47,6 @@ export function SellerOnboarding({ defaultName }: { defaultName: string }) {
       }
     }
     router.push('/dashboard');
-    router.refresh();
   }
 
   return <form className="onboarding-form" onSubmit={submit}>

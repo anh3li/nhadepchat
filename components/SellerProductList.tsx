@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Clock3, Edit3, Eye, FileUp, ImageIcon } from 'lucide-react';
-import Link from 'next/link';
+import Link from './SiteLink';
 
 type Product={id:string;slug:string;title:string;category:string;status:string;is_free:number;price:number;images:number;files:number;cover_id:string|null;downloads:number;views:number;rating:number|null;review_count:number;updated_at:number;rejection_reason:string|null};
 const labels:Record<string,string>={draft:'Bản nháp',pending:'Chờ duyệt',approved:'Đã duyệt',rejected:'Bị từ chối',archived:'Đã ẩn'};

@@ -1,5 +1,5 @@
 import { waitUntil } from 'cloudflare:workers';
-import { getD1, getFilesBucket } from '../../../../db';
+import { getD1, getLegacyFilesBucket, getPublicAssetsBucket } from '../../../../db';
 import { apiSession } from '../../../../lib/server-auth';
 
 function imageType(key: string) {
@@ -15,7 +15,9 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
   if (cache) {
     try {
       const cached = await cache.match(cacheKey);
-      if (cached) return cached;
+      // Cache responses have immutable headers. Vinext adds response headers
+      // after the route returns, so hand it a fresh mutable response wrapper.
+      if (cached) return new Response(cached.body, cached);
     } catch (error) {
       console.error('Asset cache read failed', error);
     }
@@ -35,7 +37,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     }
   }
 
-  const object = await getFilesBucket().get(asset.object_key);
+  const object = await getPublicAssetsBucket().get(asset.object_key) || await getLegacyFilesBucket().get(asset.object_key);
   if (!object) return new Response('Không tìm thấy ảnh', { status: 404 });
   const headers = new Headers();
   object.writeHttpMetadata(headers);

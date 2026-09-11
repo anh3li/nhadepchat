@@ -1,45 +1,10 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
-import { ArrowRight, Download, FileStack, Layers3 } from 'lucide-react';
-import { getD1 } from '../../db';
-import { SafeImage } from '../../components/SafeImage';
-
+import { CollectionsView } from '../../components/views/CollectionsView';
+import { getCollectionsData } from '../../lib/collection-data';
 export const metadata: Metadata = {
   title: 'Thư viện bản vẽ | Nhà Đẹp Chất',
   description: 'Khám phá các bộ hồ sơ xây dựng được tuyển chọn theo loại công trình, chuyên môn và định dạng.',
 };
 export const dynamic = 'force-dynamic';
 
-const collections = [
-  { id: 'nha-pho-5m', name: 'Nhà phố 5m', query: 'Nhà phố', where: 'p.building_type=? AND p.width=5 AND p.title NOT LIKE ?', bindings: ['Nhà phố','%Nhà cấp 4%'], description: 'Mặt bằng tối ưu cho lô đất đô thị ngang 5m.' },
-  { id: 'biet-thu-2-tang', name: 'Biệt thự 2 tầng', query: 'Biệt thự', where: 'p.building_type LIKE ? AND p.floors=2', bindings: ['%Biệt thự%'], description: 'Hồ sơ kiến trúc và kết cấu biệt thự hai tầng.' },
-  { id: 'nha-cap-4-dep', name: 'Nhà cấp 4 đẹp', query: 'Nhà cấp 4', where: '(p.building_type LIKE ? OR p.title LIKE ?)', bindings: ['%Nhà cấp 4%','%Nhà cấp 4%'], description: 'Giải pháp một tầng thực dụng, dễ thi công.' },
-  { id: 'nha-xuong-tieu-chuan', name: 'Nhà xưởng tiêu chuẩn', query: 'Nhà xưởng', where: '(p.building_type LIKE ? OR p.title LIKE ?)', bindings: ['%Nhà xưởng%','%Nhà xưởng%'], description: 'Bản vẽ công nghiệp, kết cấu và biện pháp thi công.' },
-  { id: 'file-ket-cau-hay', name: 'File kết cấu hay', query: 'Kết cấu', where: '(p.category LIKE ? OR p.title LIKE ?)', bindings: ['%Kết cấu%','%Kết cấu%'], description: 'Thuyết minh, bản tính và bản vẽ kết cấu chọn lọc.' },
-  { id: 'ho-so-mep', name: 'Hồ sơ MEP', query: 'MEP', where: '(p.category LIKE ? OR p.title LIKE ?)', bindings: ['%MEP%','%MEP%'], description: 'Điện, nước và hệ thống kỹ thuật công trình.' },
-  { id: 'noi-that', name: 'Thiết kế nội thất', query: 'Nội thất', where: '(p.category LIKE ? OR p.title LIKE ?)', bindings: ['%Nội thất%','%Nội thất%'], description: 'Hồ sơ bố trí, chi tiết và mô hình nội thất.' },
-  { id: 'mien-phi', name: 'Bản vẽ miễn phí', query: 'miễn phí', where: 'p.is_free=1', bindings: [], description: 'Tài nguyên có thể tải miễn phí từ cộng đồng.' },
-];
-
-async function collectionData() {
-  const db = getD1();
-  return Promise.all(collections.map(async collection => {
-    const coverWhere=collection.where.replaceAll('p.','px.');
-    const [count,cover]=await Promise.all([
-      db.prepare(`SELECT COUNT(*) total FROM products p WHERE p.status='approved' AND ${collection.where}`).bind(...collection.bindings).first<{total:number}>(),
-      db.prepare(`SELECT pa.id cover_id FROM products px JOIN product_assets pa ON pa.product_id=px.id WHERE px.status='approved' AND ${coverWhere} ORDER BY px.approved_at DESC,CASE WHEN pa.type='cover' THEN 0 ELSE 1 END,pa.sort_order LIMIT 1`).bind(...collection.bindings).first<{cover_id:string}>(),
-    ]);
-    return {...collection,count:Number(count?.total||0),cover:cover?.cover_id?`/api/assets/${cover.cover_id}`:''};
-  }));
-}
-
-export default async function CollectionsPage() {
-  const items = await collectionData();
-  const activeItems = items.filter(item => item.count > 0);
-  const total = await getD1().prepare("SELECT COUNT(*) total FROM products WHERE status='approved'").first<{total:number}>();
-  return <main className="subpage discovery-page">
-    <section className="discovery-hero"><div><p className="eyebrow">THƯ VIỆN TUYỂN CHỌN</p><h1>Thư viện bản vẽ</h1><p>Tìm nhanh những nhóm hồ sơ phù hợp với loại công trình và chuyên môn bạn đang triển khai.</p></div><dl><div><dt>{Number(total?.total||0)}</dt><dd>Hồ sơ đã duyệt</dd></div><div><dt>{activeItems.length}</dt><dd>Nhóm bản vẽ đang có hồ sơ</dd></div></dl></section>
-    <section className="collection-directory"><div className="directory-heading"><div><FileStack/><div><h2>Thư viện bản vẽ nổi bật</h2><p>Chỉ hiển thị những nhóm bản vẽ đang có hồ sơ đã duyệt.</p></div></div></div>{activeItems.length?<div className="collection-directory-grid">{activeItems.map(item=><article className="directory-collection" id={item.id} key={item.id}><Link href={`/tim-kiem?q=${encodeURIComponent(item.query)}`}>{item.cover?<SafeImage src={item.cover} alt={item.name}/>:<span className="image-placeholder"/>}<span className="directory-collection-overlay"><b>{item.name}</b><small>{item.count} hồ sơ</small></span></Link><div><p>{item.description}</p><Link href={`/tim-kiem?q=${encodeURIComponent(item.query)}`}>Khám phá thư viện bản vẽ <ArrowRight/></Link></div></article>)}</div>:<div className="empty-state"><h2>Chưa có nhóm bản vẽ</h2><p>Thư viện bản vẽ sẽ xuất hiện tự động khi có hồ sơ phù hợp được duyệt.</p></div>}</section>
-    <section className="discovery-callout"><Layers3/><div><h2>Chưa tìm thấy nhóm hồ sơ phù hợp?</h2><p>Dùng tìm kiếm chi tiết để lọc theo công trình, kích thước, định dạng hoặc chuyên môn.</p></div><Link className="button button-primary" href="/tim-kiem">Tìm tất cả bản vẽ <Download/></Link></section>
-  </main>;
-}
+export default async function CollectionsPage(){return <CollectionsView {...await getCollectionsData()}/>;}

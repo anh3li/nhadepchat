@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+import Link from './SiteLink';
 import { FormEvent, useEffect, useState } from 'react';
 import { Star } from 'lucide-react';
 import { SafeImage } from './SafeImage';

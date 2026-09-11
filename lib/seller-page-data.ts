@@ -1,0 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import {getD1} from '../db';
+import {productSelect} from './marketplace';
+export async function seller(slug:string){return getD1().prepare(`SELECT up.slug,up.display_name,up.avatar_key,up.bio,up.location,u.image account_image,sp.id,sp.seller_type,sp.professional_title,sp.company,sp.website,sp.verification_status,(SELECT COUNT(*) FROM products WHERE seller_id=sp.id AND status='approved') file_count,(SELECT COUNT(*) FROM downloads d JOIN products p ON p.id=d.product_id WHERE p.seller_id=sp.id) download_count,
+  CASE WHEN COALESCE((SELECT seller_rating_use_real FROM metric_settings WHERE id=1),1)=1 THEN (SELECT ROUND(AVG(sr.rating),1) FROM seller_reviews sr WHERE sr.seller_id=sp.id) ELSE COALESCE((SELECT smo.rating FROM seller_metric_overrides smo WHERE smo.seller_id=sp.id),0) END rating,
+  CASE WHEN COALESCE((SELECT seller_rating_use_real FROM metric_settings WHERE id=1),1)=1 THEN (SELECT COUNT(*) FROM seller_reviews sr WHERE sr.seller_id=sp.id) ELSE COALESCE((SELECT smo.review_count FROM seller_metric_overrides smo WHERE smo.seller_id=sp.id),0) END review_count
+  FROM seller_profiles sp JOIN user_profiles up ON up.user_id=sp.user_id LEFT JOIN user u ON u.id=up.user_id WHERE up.slug=?`).bind(slug).first<Record<string,any>>()}
+export async function getSellerPageData(slug:string){const s=await seller(slug);if(!s)return null;const rows=await getD1().prepare(`${productSelect()} WHERE p.seller_id=? AND p.status='approved' ORDER BY p.approved_at DESC LIMIT 50`).bind(s.id).all();return {s,rows,slug};}

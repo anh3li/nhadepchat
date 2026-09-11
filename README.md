@@ -19,7 +19,9 @@ Yêu cầu Node.js 22.13+.
 Worker production là `nhadepchat`. Cấu hình nguồn nằm trong `wrangler.jsonc`.
 
 - D1 binding `DB` → database `nhadepchat-db`.
-- R2 binding `FILES` → private bucket `nhadepchat-files`.
+- R2 binding `PUBLIC_ASSETS` → public preview/thumbnail bucket `nhadepchat-public-assets`.
+- R2 binding `PRIVATE_FILES` → private product-file bucket `nhadepchat-private-files`.
+- R2 binding `LEGACY_FILES` → legacy bucket `nhadepchat-files`, retained for backward-compatible reads.
 - Compatibility flag bắt buộc: `nodejs_compat`.
 
 Schema D1 nằm ở `db/schema.ts`. Migrations phải được giữ nguyên thứ tự trong `drizzle/` và không seed dữ liệu demo vào production:
@@ -28,7 +30,7 @@ Schema D1 nằm ở `db/schema.ts`. Migrations phải được giữ nguyên th�
 npx wrangler d1 migrations apply nhadepchat-db --remote --config wrangler.jsonc
 ```
 
-Bucket `nhadepchat-files` không bật public access. Ảnh và file gốc được đọc qua API có kiểm tra session, trạng thái và quyền. Khi chưa cấu hình bốn biến `R2_*`, ứng dụng dùng authenticated server-stream upload qua binding `FILES`. Direct browser upload chỉ nên dùng S3 token Object Read & Write giới hạn đúng bucket và CORS giới hạn production origin/localhost.
+Bucket private không bật public access và không gắn Custom Domain. Preview mới được lưu trong public bucket, có thể phân phối qua `NEXT_PUBLIC_MEDIA_URL`. File gốc chỉ được đọc qua backend sau khi kiểm tra quyền. Direct browser upload dùng S3 token giới hạn đúng bucket và CORS giới hạn production origin/localhost.
 
 ## Worker secrets
 
@@ -38,6 +40,9 @@ Không ghi giá trị thật vào GitHub, README, `wrangler.jsonc` hoặc source
 - `BETTER_AUTH_URL`: URL production chính xác (`https://...workers.dev` hoặc custom domain).
 - `ADMIN_EMAILS`: danh sách email admin bootstrap, phân tách bằng dấu phẩy.
 - `R2_ACCOUNT_ID`, `R2_BUCKET_NAME`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`: tùy chọn, chỉ cho direct upload.
+- `R2_PUBLIC_BUCKET`, `R2_PRIVATE_BUCKET`: tên hai bucket mới.
+- `NEXT_PUBLIC_MEDIA_URL`: public R2 Custom Domain/CDN cho preview.
+- `PAYMENT_WEBHOOK_SECRET`: secret xác thực webhook thanh toán.
 
 Để bootstrap admin đầu tiên, đặt `ADMIN_EMAILS`, deploy rồi đăng ký đúng email đó. Không hardcode email admin trong source.
 

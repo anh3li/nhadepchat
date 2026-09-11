@@ -1,11 +1,12 @@
 'use client';
+import {useSiteRouter} from './useSiteRouter';
 
 import { FormEvent, useState } from 'react';
-import { useRouter } from 'next/navigation';
+
 import { authClient } from '../lib/auth-client';
 
 export function ChangePasswordForm() {
-  const router = useRouter();
+  const router = useSiteRouter();
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
 
@@ -36,7 +37,6 @@ export function ChangePasswordForm() {
 
     await authClient.signOut();
     router.replace('/dang-nhap?changed=1&returnTo=%2Ftai-khoan');
-    router.refresh();
   }
 
   return <form className="auth-form compact" onSubmit={submit}>

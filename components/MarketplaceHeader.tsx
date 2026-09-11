@@ -1,7 +1,8 @@
 'use client';
+import {useSiteRouter} from './useSiteRouter';
 
-import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import Link from './SiteLink';
+import { usePathname} from 'next/navigation';
 import {
   FormEvent,
   useEffect,
@@ -90,7 +91,7 @@ const icons: Record<string, LucideIcon> = {
 };
 
 export function MarketplaceHeader({ initialViewer, initialCartCount }: { initialViewer: HeaderViewer | null; initialCartCount: number }) {
-  const router = useRouter();
+  const router = useSiteRouter();
   const pathname = usePathname();
   const headerRef = useRef<HTMLElement>(null);
   const [navigating, startNavigation] = useTransition();

@@ -5,7 +5,7 @@ import nextTs from 'eslint-config-next/typescript';
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
-  globalIgnores(['.next/**', 'out/**', 'build/**', 'next-env.d.ts']),
+  globalIgnores(['**/.next/**', 'out/**', 'build/**', 'next-env.d.ts', 'pages-site/.next-pages/**', 'pages-site/out/**', 'pages-site/public/**', 'pages-site/next-env.d.ts', 'tran-gia-house-main/**']),
 ]);
 
 export default eslintConfig;

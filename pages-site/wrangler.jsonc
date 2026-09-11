@@ -1,0 +1,7 @@
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "nhadepchat",
+  "pages_build_output_dir": "out",
+  "compatibility_date": "2026-09-09",
+  "services": [{"binding":"BACKEND","service":"nhadepchat"}]
+}

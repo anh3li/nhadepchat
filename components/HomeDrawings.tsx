@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import Link from 'next/link';
+import Link from './SiteLink';
 import { ProductCard, type ProductCardData } from './ProductCard';
 
 type SortMode = 'Mới nhất' | 'Tải nhiều' | 'Giá thấp' | 'Giá cao';

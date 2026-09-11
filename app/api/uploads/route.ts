@@ -1,4 +1,4 @@
-import { getD1, getFilesBucket } from '../../../db';
+import { getD1, getFilesBucket, getPublicAssetsBucket } from '../../../db';
 import { apiSeller } from '../../../lib/server-auth';
 import { isAllowedMime, jsonError, safeFilename } from '../../../lib/marketplace';
 
@@ -11,14 +11,16 @@ export async function POST(request: Request) {
   if(!(file instanceof File))return jsonError('Chưa chọn file.',422);
   const owned=await getD1().prepare("SELECT id FROM products WHERE id=? AND seller_id=? AND status IN ('draft','rejected')").bind(productId,current.seller.id).first();
   if(!owned)return jsonError('Sản phẩm không thuộc quyền chỉnh sửa của bạn.',403);
-  const ext=(file.name.split('.').pop()||'').toLowerCase(), isPreview=kind==='preview', allowed=isPreview?previewExtensions:fileExtensions, max=isPreview?4*1024*1024:250*1024*1024;
+  const ext=(file.name.split('.').pop()||'').toLowerCase(), isPreview=kind==='preview'||kind==='thumbnail', allowed=isPreview?previewExtensions:fileExtensions, max=isPreview?4*1024*1024:250*1024*1024;
   if(isPreview){const count=await getD1().prepare('SELECT COUNT(*) count FROM product_assets WHERE product_id=?').bind(productId).first<{count:number}>();if((count?.count||0)>=30)return jsonError('Mỗi sản phẩm tối đa 30 ảnh preview.',422);}
   if(!allowed.has(ext))return jsonError(isPreview?'Ảnh phải được tối ưu sang WEBP trước khi tải lên.':'Định dạng file không được phép.',422); if(file.size>max)return jsonError(`File vượt quá giới hạn ${isPreview?'4MB':'250MB'}.`,422);
   if(!isAllowedMime(ext,file.type||'application/octet-stream',isPreview))return jsonError('MIME file không khớp với định dạng đã chọn.',422);
-  const id=crypto.randomUUID(), objectKey=`products/${productId}/${isPreview?'preview':'files'}/${id}.${ext}`;
-  await getFilesBucket().put(objectKey,file.stream(),{httpMetadata:{contentType:file.type||'application/octet-stream'},customMetadata:{ownerId:current.session.user.id,productId,originalName:safeFilename(file.name)}});
+  const id=crypto.randomUUID(), objectKey=isPreview?`previews/${productId}/${id}${kind==='thumbnail'?'-thumb':''}.${ext}`:`products/${productId}/files/${id}.${ext}`;
+  const bucket=isPreview?getPublicAssetsBucket():getFilesBucket();
+  await bucket.put(objectKey,file.stream(),{httpMetadata:{contentType:file.type||'application/octet-stream'},customMetadata:{ownerId:current.session.user.id,productId,originalName:safeFilename(file.name)}});
   const db=getD1(),now=Date.now();
-  if(isPreview){const count=await db.prepare('SELECT COUNT(*) count FROM product_assets WHERE product_id=?').bind(productId).first<{count:number}>();await db.prepare('INSERT INTO product_assets (id,product_id,object_key,type,sort_order,created_at) VALUES (?,?,?,?,?,?)').bind(id,productId,objectKey,count?.count?'preview':'cover',count?.count||0,now).run();}
+  if(kind==='thumbnail'){const assetId=String(form.get('assetId')||'');await db.prepare('UPDATE product_assets SET thumbnail_key=? WHERE id=? AND product_id=?').bind(objectKey,assetId,productId).run();}
+  else if(isPreview){const count=await db.prepare('SELECT COUNT(*) count FROM product_assets WHERE product_id=?').bind(productId).first<{count:number}>();await db.prepare('INSERT INTO product_assets (id,product_id,object_key,type,sort_order,created_at) VALUES (?,?,?,?,?,?)').bind(id,productId,objectKey,count?.count?'preview':'cover',count?.count||0,now).run();}
   else await db.batch([db.prepare('INSERT INTO product_files (id,product_id,object_key,original_name,extension,mime_type,size,created_at) VALUES (?,?,?,?,?,?,?,?)').bind(id,productId,objectKey,safeFilename(file.name),ext,file.type||'application/octet-stream',file.size,now),db.prepare('INSERT OR IGNORE INTO product_formats (product_id,format) VALUES (?,?)').bind(productId,ext.toUpperCase())]);
   return Response.json({ok:true,id,name:safeFilename(file.name),size:file.size,url:isPreview?`/api/assets/${id}`:null});
 }

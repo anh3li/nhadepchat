@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
+import {useSiteRouter} from './useSiteRouter';
 
 import { ChangeEvent, DragEvent, FormEvent, KeyboardEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { Check, ChevronLeft, ChevronRight, Download, Eye, GripVertical, ImagePlus, Star, Trash2, UploadCloud, X } from 'lucide-react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { uploadProductFile } from '../lib/upload-product-file';
 import { optimizeImageToWebp } from '../lib/image-optimization';
 import { ProductCard } from './ProductCard';
@@ -26,7 +27,7 @@ export function ProductWizard(){
   return <ProductWizardForm key={editId||'new'} editId={editId}/>;
 }
 function ProductWizardForm({editId}:{editId:string|null}){
-  const router=useRouter();
+  const router=useSiteRouter();
   const [step,setStep]=useState(0),[data,setData]=useState(initial),[productId,setProductId]=useState<string|null>(editId),[uploads,setUploads]=useState<UploadItem[]>([]),[coverId,setCoverId]=useState<string|null>(null),[error,setError]=useState(''),[message,setMessage]=useState(''),[busy,setBusy]=useState(false),[keywordInput,setKeywordInput]=useState('');
   const [loadState,setLoadState]=useState<'loading'|'ready'|'error'>(editId?'loading':'ready');
   useEffect(()=>{if(!editId)return;fetch(`/api/marketplace/products?id=${encodeURIComponent(editId)}`).then(async r=>{if(!r.ok)throw new Error('Không tải được bản nháp.');return r.json()}).then((p:any)=>{if(!p.id)throw new Error('Không tìm thấy bản nháp.');const category=buildings.includes(p.category)?p.category:(buildings.includes(p.building_type)?p.building_type:'Công trình khác');setData({...initial,...p,category,buildingType:buildings.includes(p.building_type)?p.building_type:'Công trình khác',style:styles.includes(p.style)?p.style:'Khác',width:p.width||'',length:p.length||'',floors:p.floors||'',area:p.area||'',formats:String(p.formats||'').split(',').filter(Boolean),disciplines:p.disciplines||[],tools:p.tools||[],keywords:p.keywords||[],isFree:!!p.is_free,price:String(p.price||0),shortDescription:p.short_description||''});const assets=(p.assets||[]).map((a:any,i:number)=>({id:a.id,name:`Ảnh preview ${i+1}`,size:0,url:`/api/assets/${a.id}`,progress:100,kind:'preview' as const,type:a.type}));setUploads([...assets,...(p.files||[]).map((f:any)=>({id:f.id,name:f.name,size:f.size,extension:f.extension,progress:100,kind:'file' as const}))]);setCoverId(assets.find((a:UploadItem)=>a.type==='cover')?.id||assets[0]?.id||null);setLoadState('ready')}).catch(()=>{setLoadState('error');setError('Không tải được bản nháp. Vui lòng tải lại trang; nội dung cũ chưa bị thay đổi.')})},[editId]);
@@ -60,6 +61,12 @@ function ProductWizardForm({editId}:{editId:string|null}){
           const uploadFile=kind==='preview'?await optimizeImageToWebp(file,{maxDimension:1600,maxBytes:2*1024*1024,quality:.78}):file;
           setUploads(v=>v.map(x=>x.id===temp?{...x,name:uploadFile.name,size:uploadFile.size,progress:2}:x));
           const result=await uploadProductFile(productId,uploadFile,kind,progress=>setUploads(v=>v.map(x=>x.id===temp?{...x,progress}:x)));
+          if(kind==='preview'){
+            try {
+              const thumbnail=await optimizeImageToWebp(file,{maxDimension:560,maxBytes:220*1024,quality:.72});
+              await uploadProductFile(productId,thumbnail,'thumbnail',()=>{},result.id);
+            } catch { /* The full preview remains a compatible legacy fallback. */ }
+          }
           const extension=uploadFile.name.split('.').pop()?.toUpperCase()||'';
           setUploads(v=>v.map(x=>x.id===temp?{...x,id:result.id,url:result.url,extension,progress:100}:x));
           if(kind==='preview')setCoverId(current=>current||result.id);

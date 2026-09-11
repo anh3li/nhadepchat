@@ -18,7 +18,11 @@ function setup({ status = 'approved', session = null, cacheHit, cachePut = async
     '../../../../lib/server-auth': { apiSession: async () => session },
     '../../../../db': {
       getD1: () => ({ prepare: () => ({ bind: () => ({ first: async () => ({ object_key: 'preview.webp', status, user_id: 'owner' }) }) }) }),
-      getFilesBucket: () => ({ get: async () => {
+      getPublicAssetsBucket: () => ({ get: async () => {
+        reads++;
+        return { body: 'image', size: 5, httpEtag: '"test"', writeHttpMetadata() {} };
+      } }),
+      getLegacyFilesBucket: () => ({ get: async () => {
         reads++;
         return { body: 'image', size: 5, httpEtag: '"test"', writeHttpMetadata() {} };
       } }),
@@ -55,6 +59,16 @@ test('cache hits avoid reading object storage', async () => {
   const app = setup({ cacheHit: new Response('cached') });
   assert.equal(await (await app.get()).text(), 'cached');
   assert.equal(app.reads(), 0);
+});
+
+test('cached response headers can be extended by the framework', async () => {
+  const immutable=await fetch('data:image/webp;base64,aW1hZ2U=');
+  assert.throws(()=>immutable.headers.set('x-framework','value'));
+  const app=setup({cacheHit:immutable});
+  const response=await app.get();
+  response.headers.set('x-framework','value');
+  assert.equal(response.headers.get('x-framework'),'value');
+  assert.equal(await response.text(),'image');
 });
 
 test('unapproved images reject anonymous viewers before reading storage', async () => {

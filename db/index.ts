@@ -13,6 +13,16 @@ export function getD1() {
 }
 
 export function getFilesBucket() {
-  if (!env.FILES) throw new Error('Cloudflare R2 binding `FILES` chưa được cấu hình.');
-  return env.FILES;
+  if (!env.PRIVATE_FILES && !env.FILES) throw new Error('Cloudflare R2 binding `PRIVATE_FILES` chưa được cấu hình.');
+  return env.PRIVATE_FILES || env.FILES!;
+}
+
+export function getPublicAssetsBucket() {
+  if (!env.PUBLIC_ASSETS && !env.FILES) throw new Error('Cloudflare R2 binding `PUBLIC_ASSETS` chưa được cấu hình.');
+  return env.PUBLIC_ASSETS || env.FILES!;
+}
+
+export function getLegacyFilesBucket() {
+  if (!env.LEGACY_FILES && !env.FILES) throw new Error('Cloudflare R2 binding legacy chưa được cấu hình.');
+  return env.LEGACY_FILES || env.FILES!;
 }

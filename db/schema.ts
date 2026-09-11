@@ -58,7 +58,7 @@ export const products = sqliteTable('products', {
 
 export const productAssets = sqliteTable('product_assets', {
   id: text('id').primaryKey(), productId: text('product_id').notNull().references(() => products.id, { onDelete: 'cascade' }), objectKey: text('object_key').notNull(),
-  type: text('type', { enum: ['preview','cover'] }).notNull().default('preview'), sortOrder: integer('sort_order').notNull().default(0), width: integer('width'), height: integer('height'), createdAt: integer('created_at').notNull(),
+  thumbnailKey: text('thumbnail_key'), type: text('type', { enum: ['preview','cover'] }).notNull().default('preview'), sortOrder: integer('sort_order').notNull().default(0), width: integer('width'), height: integer('height'), createdAt: integer('created_at').notNull(),
 }, (table) => [uniqueIndex('product_assets_object_key_unique').on(table.objectKey), index('idx_product_assets_product_sort').on(table.productId, table.sortOrder)]);
 
 export const productFiles = sqliteTable('product_files', {
@@ -90,6 +90,15 @@ export const cartItems = sqliteTable('cart_items', {
   id: text('id').primaryKey(), userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
   productId: text('product_id').notNull().references(() => products.id, { onDelete: 'cascade' }), createdAt: integer('created_at').notNull(),
 }, (table) => [uniqueIndex('cart_items_user_product_unique').on(table.userId, table.productId), index('idx_cart_items_user_created').on(table.userId, table.createdAt)]);
+
+export const orders = sqliteTable('orders', {
+  id: text('id').primaryKey(), userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  total: integer('total').notNull(), paymentStatus: text('payment_status').notNull().default('PENDING'), paymentProvider: text('payment_provider'), providerReference: text('provider_reference'), paidAt: integer('paid_at'), createdAt: integer('created_at').notNull(), updatedAt: integer('updated_at').notNull(),
+}, (table) => [index('idx_orders_user_status').on(table.userId, table.paymentStatus), uniqueIndex('orders_provider_reference_unique').on(table.providerReference)]);
+
+export const orderItems = sqliteTable('order_items', {
+  id: text('id').primaryKey(), orderId: text('order_id').notNull().references(() => orders.id, { onDelete: 'cascade' }), productId: text('product_id').notNull().references(() => products.id, { onDelete: 'restrict' }), price: integer('price').notNull(), createdAt: integer('created_at').notNull(),
+}, (table) => [index('idx_order_items_order_product').on(table.orderId, table.productId), uniqueIndex('order_items_order_product_unique').on(table.orderId, table.productId)]);
 
 export const productViews = sqliteTable('product_views', {
   id: text('id').primaryKey(), productId: text('product_id').notNull().references(() => products.id, { onDelete: 'cascade' }),

@@ -40,3 +40,11 @@ next-env.d.ts
 /work/
 /site.tar.gz
 *.tsbuildinfo
+pages-site/catalog.json
+pages-site/public/
+pages-site/out/
+pages-site/.next-pages/
+pages-site/.next/
+pages-site/.wrangler/
+pages-site/next-env.d.ts
+tran-gia-house-main/

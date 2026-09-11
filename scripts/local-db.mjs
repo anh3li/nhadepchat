@@ -14,7 +14,11 @@ const config = {
     binding: 'DB', database_name: databaseName,
     database_id: '6537ec71-c4aa-4251-ad98-7700c5b6823e', migrations_dir: '../drizzle',
   }],
-  r2_buckets: [{ binding: 'FILES', bucket_name: 'site-creator-r2' }],
+  r2_buckets: [
+    { binding: 'PUBLIC_ASSETS', bucket_name: 'site-creator-public-assets' },
+    { binding: 'PRIVATE_FILES', bucket_name: 'site-creator-private-files' },
+    { binding: 'LEGACY_FILES', bucket_name: 'site-creator-r2' },
+  ],
 };
 
 function run(args) {

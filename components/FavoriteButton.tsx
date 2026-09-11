@@ -1,8 +1,9 @@
 'use client';
+import {useSiteRouter} from './useSiteRouter';
 
 import { MouseEvent, useEffect, useState } from 'react';
 import { Heart } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+
 
 let ids = new Set<string>();
 let authenticated = false;
@@ -21,7 +22,7 @@ function load() {
 }
 
 export function FavoriteButton({ productId, returnUrl, className = 'save' }: { productId: string; returnUrl?: string; className?: string }) {
-  const router = useRouter();
+  const router = useSiteRouter();
   const [, rerender] = useState(0); const [busy, setBusy] = useState(false); const saved = ids.has(productId);
   useEffect(() => { const fn=()=>rerender(v=>v+1); listeners.add(fn); void load(); return()=>{listeners.delete(fn)}; }, []);
   async function toggle(event: MouseEvent<HTMLButtonElement>) {

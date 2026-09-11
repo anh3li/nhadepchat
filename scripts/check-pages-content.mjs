@@ -1,0 +1,11 @@
+import {appendFile} from 'node:fs/promises';
+const source=process.env.PAGES_DATA_ORIGIN||'https://nhadepchat.tranvukim-tvk.workers.dev';
+const destination=process.env.PAGES_SITE_ORIGIN||'https://nhadepchat.pages.dev';
+const response=await fetch(`${source}/api/public/pages?kind=revision`,{signal:AbortSignal.timeout(60000)});
+if(!response.ok)throw new Error(`Cannot read public revision: ${response.status}`);
+const current=await response.json();
+const deployed=await fetch(`${destination}/catalog-revision.json`,{cache:'no-store',signal:AbortSignal.timeout(60000)});
+const previous=deployed.ok?await deployed.json():null;
+const changed=JSON.stringify(current)!==JSON.stringify(previous);
+console.log(changed?'Published content changed; rebuilding Pages.':'Published content is unchanged.');
+if(process.env.GITHUB_OUTPUT)await appendFile(process.env.GITHUB_OUTPUT,`changed=${changed}\n`);

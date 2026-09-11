@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
+import Link from './SiteLink';
 import { CheckCircle2, Eye, XCircle } from 'lucide-react';
 
 type Product = {

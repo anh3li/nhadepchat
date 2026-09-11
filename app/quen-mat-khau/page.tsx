@@ -1,3 +1,3 @@
-import type { Metadata } from 'next';import Link from 'next/link';import { AuthShell } from '../../components/AuthShell';
+import type { Metadata } from 'next';import Link from '../../components/SiteLink';import { AuthShell } from '../../components/AuthShell';
 export const metadata:Metadata={title:'Quên mật khẩu | Nhà Đẹp Chất',robots:{index:false,follow:false}};
 export default function ForgotPassword(){return <AuthShell eyebrow="KHÔI PHỤC TÀI KHOẢN" title="Quên mật khẩu" description="Tính năng gửi email khôi phục chưa được bật vì hệ thống chưa cấu hình nhà cung cấp email giao dịch."><div className="auth-notice"><b>Bạn cần hỗ trợ ngay?</b><p>Liên hệ quản trị viên để xác minh quyền sở hữu và đặt lại mật khẩu an toàn.</p></div><Link className="form-submit" href="/dang-nhap">Quay lại đăng nhập</Link></AuthShell>}

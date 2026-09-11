@@ -1,5 +1,6 @@
 import { getD1 } from '../db';
 import { productSelect } from './marketplace';
+import { publicProductImages } from './media';
 
 const collectionRules = [
   { id: 'nha-pho-5m', where: 'p.building_type=? AND p.width=5 AND p.title NOT LIKE ?', bindings: ['Nhà phố', '%Nhà cấp 4%'] },
@@ -47,9 +48,9 @@ export async function getHomeData() {
   } : realStats;
 
   return {
-    products: products.results,
+    products: products.results.map(publicProductImages),
     architects: architects.results,
-    popular: popular.results,
+    popular: popular.results.map(publicProductImages),
     collections: Object.fromEntries(collectionRules.map((rule, index) => [rule.id, collectionRows[index]])),
     stats,
   };

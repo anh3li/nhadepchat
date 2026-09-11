@@ -77,6 +77,7 @@ export function productSelect() {
   return `SELECT p.*, up.slug seller_slug, up.display_name seller_name, up.avatar_key seller_avatar, u.image seller_account_image,
     sp.professional_title, sp.verification_status,
     (SELECT object_key FROM product_assets pa WHERE pa.product_id=p.id ORDER BY CASE WHEN pa.type='cover' THEN 0 ELSE 1 END, pa.sort_order LIMIT 1) cover_key,
+    (SELECT thumbnail_key FROM product_assets pa WHERE pa.product_id=p.id ORDER BY CASE WHEN pa.type='cover' THEN 0 ELSE 1 END, pa.sort_order LIMIT 1) thumbnail_key,
     (SELECT id FROM product_assets pa WHERE pa.product_id=p.id ORDER BY CASE WHEN pa.type='cover' THEN 0 ELSE 1 END, pa.sort_order LIMIT 1) cover_id,
     (SELECT GROUP_CONCAT(format, ' · ') FROM product_formats pf WHERE pf.product_id=p.id) formats,
     CASE WHEN COALESCE((SELECT product_use_real FROM metric_settings WHERE id=1),1)=1

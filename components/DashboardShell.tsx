@@ -1,7 +1,7 @@
 'use client';
 
 import { Download, FileText, Heart, Home, LayoutDashboard, Menu, PlusSquare, Settings, ShieldCheck, SlidersHorizontal, Store, UserRound, X } from 'lucide-react';
-import Link from 'next/link';
+import Link from './SiteLink';
 import { ReactNode, useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { BrandLogo } from './BrandLogo';

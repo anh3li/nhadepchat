@@ -1,8 +1,8 @@
 /** Upload completion, not transport progress, determines whether an asset is ready. */
-export async function uploadProductFile(productId: string, file: File, kind: 'preview' | 'file', onProgress: (value: number) => void) {
+export async function uploadProductFile(productId: string, file: File, kind: 'preview' | 'thumbnail' | 'file', onProgress: (value: number) => void, assetId?: string) {
   const response = await fetch('/api/uploads/presign', {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ productId, kind, name: file.name, mime: file.type || 'application/octet-stream', size: file.size }),
+    body: JSON.stringify({ productId, kind, assetId, name: file.name, mime: file.type || 'application/octet-stream', size: file.size }),
   });
   const presign = await response.json() as { error?: string; direct?: boolean; uploadUrl: string; headers?: Record<string, string>; id: string; objectKey: string; originalName: string; mime: string };
   if (!response.ok) throw new Error(presign.error || 'Không thể chuẩn bị tải file.');
@@ -20,13 +20,13 @@ export async function uploadProductFile(productId: string, file: File, kind: 'pr
       try { resolve(presign.direct ? { id: presign.id } : JSON.parse(xhr.responseText)); }
       catch { reject(new Error('Máy chủ trả về kết quả tải file không hợp lệ.')); }
     };
-    const form = new FormData(); form.set('productId', productId); form.set('kind', kind); form.set('file', file);
+    const form = new FormData(); form.set('productId', productId); form.set('kind', kind); if (assetId) form.set('assetId', assetId); form.set('file', file);
     xhr.send(presign.direct ? file : form);
   });
   if (presign.direct) {
     const completed = await fetch('/api/uploads/complete', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: presign.id, productId, objectKey: presign.objectKey, kind, originalName: presign.originalName, extension: file.name.split('.').pop()?.toLowerCase() || '', mime: presign.mime, size: file.size }),
+      body: JSON.stringify({ id: presign.id, productId, assetId, objectKey: presign.objectKey, kind, originalName: presign.originalName, extension: file.name.split('.').pop()?.toLowerCase() || '', mime: presign.mime, size: file.size }),
     });
     const body = await completed.json() as { error?: string };
     if (!completed.ok) throw new Error(body.error || 'Chưa xác nhận được file. Vui lòng thử lại.');

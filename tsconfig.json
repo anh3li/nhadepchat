@@ -25,11 +25,13 @@
   },
   "include": [
     "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
+    "app/**/*.ts", "app/**/*.tsx",
+    "components/**/*.ts", "components/**/*.tsx",
+    "lib/**/*.ts", "db/**/*.ts", "env.d.ts",
+    "*.config.ts",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "pages-site", "dist"]
 }

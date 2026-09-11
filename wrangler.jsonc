@@ -18,7 +18,15 @@
   ],
   "r2_buckets": [
     {
-      "binding": "FILES",
+      "binding": "PUBLIC_ASSETS",
+      "bucket_name": "nhadepchat-public-assets"
+    },
+    {
+      "binding": "PRIVATE_FILES",
+      "bucket_name": "nhadepchat-private-files"
+    },
+    {
+      "binding": "LEGACY_FILES",
       "bucket_name": "nhadepchat-files"
     }
   ],

@@ -5,6 +5,7 @@ import { PointerEvent, useEffect, useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight, Maximize2, Minus, Plus, X } from 'lucide-react';
 
 export type GalleryImage = { id: string; src: string; alt: string };
+const thumbnail=(src:string)=>src.includes('/previews/')?src.replace(/\.webp$/,'-thumb.webp'):src;
 
 export function ProductGallery({images,compact=false}:{images:GalleryImage[];compact?:boolean}){
   const [index,setIndex]=useState(0),[open,setOpen]=useState(false),[failed,setFailed]=useState<Set<string>>(new Set());
@@ -13,7 +14,7 @@ export function ProductGallery({images,compact=false}:{images:GalleryImage[];com
   const safeIndex=Math.min(index,images.length-1),active=images[safeIndex];
   return <div className={`product-gallery${compact?' compact':''}`}>
     <button ref={opener} type="button" className="gallery-main" onClick={()=>setOpen(true)} aria-label="Mở ảnh toàn màn hình">{failed.has(active.id)?<span>Không thể tải ảnh</span>:<img src={active.src} alt={active.alt} loading="eager" fetchPriority="high" decoding="async" onError={()=>setFailed(old=>new Set(old).add(active.id))}/>}<span className="gallery-expand"><Maximize2 size={18}/>Xem toàn màn hình</span></button>
-    {images.length>1&&<div className="gallery-thumbs" aria-label="Danh sách ảnh">{images.map((image,i)=><button type="button" className={i===safeIndex?'active':''} key={image.id} onClick={()=>setIndex(i)} aria-label={`Xem ảnh ${i+1}`}><img src={image.src} alt="" loading="lazy"/><span>{i+1}</span></button>)}</div>}
+    {images.length>1&&<div className="gallery-thumbs" aria-label="Danh sách ảnh">{images.map((image,i)=><button type="button" className={i===safeIndex?'active':''} key={image.id} onClick={()=>setIndex(i)} aria-label={`Xem ảnh ${i+1}`}><img src={thumbnail(image.src)} alt="" loading="lazy"/><span>{i+1}</span></button>)}</div>}
     {open&&<ImageViewer images={images} initial={safeIndex} onIndex={setIndex} onClose={()=>{setOpen(false);setTimeout(()=>opener.current?.focus(),0)}}/>}
   </div>;
 }
@@ -37,6 +38,6 @@ export function ImageViewer({images,initial,onIndex,onClose}:{images:GalleryImag
     <div className="lightbox-toolbar"><button type="button" onClick={()=>scaleTo(zoom-.5)} disabled={zoom<=1} aria-label="Thu nhỏ" title="Thu nhỏ"><Minus/></button><span>{Math.round(zoom*100)}%</span><button type="button" onClick={()=>scaleTo(zoom+.5)} disabled={zoom>=4} aria-label="Phóng to" title="Phóng to"><Plus/></button><button type="button" onClick={reset} aria-label="Vừa màn hình" title="Vừa màn hình">Vừa ảnh</button><button type="button" onClick={onClose} aria-label="Đóng" title="Đóng"><X/></button></div>
     {images.length>1&&<><button type="button" className="lightbox-prev" onClick={()=>go(-1)} aria-label="Ảnh trước" title="Ảnh trước"><ChevronLeft/></button><button type="button" className="lightbox-next" onClick={()=>go(1)} aria-label="Ảnh sau" title="Ảnh sau"><ChevronRight/></button></>}
     <div ref={stage} className={`lightbox-stage${zoom>1?' zoomed':''}`} onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={event=>{pointers.current.delete(event.pointerId);pinched.current=true}} onWheel={event=>{event.preventDefault();scaleTo(zoom+(event.deltaY<0?.25:-.25))}} onDoubleClick={()=>scaleTo(zoom===1?2:1)}>{loading&&!error&&<span className="gallery-loading">Đang tải ảnh…</span>}{error?<span className="gallery-error">Không thể tải ảnh này.</span>:<img key={active.id} ref={image} decoding="async" src={active.src} alt={active.alt} draggable={false} onLoad={()=>setLoading(false)} onError={()=>{setLoading(false);setError(true)}} style={{transform:`translate3d(${pan.x}px,${pan.y}px,0) scale(${zoom})`}}/>}</div>
-    <div className="lightbox-footer"><span>{index+1} / {images.length}</span>{images.length>1&&<div className="lightbox-thumbs">{images.map((item,i)=><button type="button" key={item.id} className={i===index?'active':''} onClick={()=>{if(i===index)return;reset();setIndex(i);onIndex(i);setLoading(true);setError(false)}} aria-label={`Mở ảnh ${i+1}`}><img src={item.src} alt="" loading="lazy" decoding="async"/></button>)}</div>}</div>
+    <div className="lightbox-footer"><span>{index+1} / {images.length}</span>{images.length>1&&<div className="lightbox-thumbs">{images.map((item,i)=><button type="button" key={item.id} className={i===index?'active':''} onClick={()=>{if(i===index)return;reset();setIndex(i);onIndex(i);setLoading(true);setError(false)}} aria-label={`Mở ảnh ${i+1}`}><img src={thumbnail(item.src)} alt="" loading="lazy" decoding="async"/></button>)}</div>}</div>
   </div>;
 }

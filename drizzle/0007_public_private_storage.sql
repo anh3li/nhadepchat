@@ -1,0 +1,1 @@
+ALTER TABLE product_assets ADD COLUMN thumbnail_key TEXT;

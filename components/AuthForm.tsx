@@ -5,7 +5,7 @@ import { Eye, EyeOff } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import { authClient } from '../lib/auth-client';
 import { authReturnPath } from '../lib/auth-return-path';
-import Link from 'next/link';
+import Link from './SiteLink';
 
 function authError(message?: string) {
   const normalized = (message || '').toLowerCase();

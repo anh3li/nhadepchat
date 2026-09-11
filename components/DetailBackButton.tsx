@@ -1,10 +1,11 @@
 'use client';
+import {useSiteRouter} from './useSiteRouter';
 
 import { ArrowLeft } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+
 
 export function DetailBackButton(){
-  const router=useRouter();
+  const router=useSiteRouter();
   function goBack(){
     if(window.history.length>1)router.back();
     else router.push('/tim-kiem');
